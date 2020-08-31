@@ -16,22 +16,28 @@ Micrio 2.9, short history, techstack, browser compatibility.
 	1. **[The Discovery](#31-the-discovery)**:
 	Asm.js old demos, WASM summit at Google Feb 2020
 
-	2. **[The Rewrite](#32-the-rewrite)**:
-	The initial application of WASM to Micrio 2.9
+	2. **[The Rewrite (1)](#32-the-rewrite-1)**:
+	From JS to C++
 
-	3. **The Realization**:
+	3. **[First Results](#33-first-results)**:
+	How C++ was not the perfect choice
+
+	4. **[The Rewrite (2)](#34-the-rewrite-2)**:
+	The initial application of AssemblyScript WASM to Micrio 2.9
+
+	5. **The Realization**:
 	The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
 
-	4. **The Rewrite**:
+	6. **The Rewrite (3)**:
 	4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
-	5. **The Benchmark**:
+	7. **The Benchmark**:
 	What and how to measure, what to improve
 
-	6. **The Rewrite**:
+	8. **The Rewrite (4)**:
 	Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
 
-	7. **The Polish**:
+	9. **The Satisfaction**:
 	Finishing touches and real world results
 
 4. **Conclusions**:
@@ -59,7 +65,7 @@ Already back in 2013, a [demo was released](https://www.youtube.com/watch?v=BV32
 
 For me, this was the first application I saw of [asm.js](https://en.wikipedia.org/wiki/Asm.js) -- allowing compiled code to run inside your browser at near-native speeds, using a super-optimized CPU-friendly subset of JavaScript. You could get this to work by compiling to [LLVM](https://en.wikipedia.org/wiki/LLVM)-compatible formats using for instance [emscripten](https://emscripten.org/) for `C/C++`-code. 
 
-This was a definite game changer for the web and left me wanting to try it out myself for the longest time (*spoilers: I never did*). It was also picked up brilliantly by the major browser engines, each in their own optimizing way.
+This was a definite game changer for the web and left me wanting to try it out myself for the longest time (*spoilers: it took 7 years*). It was also picked up brilliantly by the major browser engines, each in their own optimizing way.
 
 Fast forward to March 2017. [WebAssembly is introduced](https://hacks.mozilla.org/2017/03/why-webassembly-is-faster-than-asm-js/) as an even more powerful way to run binary code in your browser. This joint effort by all major browsers (Firefox, Chrome, Safari and Internet Explorer) was focussed on bundling all separate efforts made so far by running compiled code inside the browser.
 
@@ -71,6 +77,34 @@ That day was a real eye-opener for me on what WebAssembly can do, was already do
 
 
 
-### 3.2. The Rewrite
+### 3.2. The Rewrite (1)
 
+Prior to the WebAssembly Summit, and to get to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in `C` or `C++`, and compile it to a binary `.wasm`-file, that your browser can natively run. 
+
+At this point, I still didn't really have a clear image of where WebAssembly starts and stops, and how autonomously could run inside your browser, so I started a new project from scratch to see if I could make a `C++`-implementation of the basic Micrio logic: a virtual *zoomable* and *pannable* image consisting of a lot of separate tiles, using a virtual camera downloading and displaying only the tiles necessary for what you are viewing inside your screen.
+
+This sounds like a lot of work, but the basic model comes down to simple maths; I had already created a serverside `C#` image renderer earlier; so *how hard could it be* to simply port that to `C++`?
+
+It turns out, emscripten had already a great compatibility for [libsdl](https://www.libsdl.org/): a low-level audio, keyboard/mouse input, and OpenGL library. Which is awesome, because I could write my code using this very well documented library, already *including mouse and key* inputs and WebGL rendering. Since I was also working with downloading images, I also used the [stb_image.h](https://github.com/nothings/stb) image library.
+
+The largest struggle of this was picking up `C++` again, never having used it for real-world projects. But after a few days of cursing and second guessing myself, I had a working first version with all of the most important features written with help of the SDL library:
+
+* A virtual camera and all necessary viewing logic;
+* Image tiles downloading;
+* Image using WebGL(/OpenGL) using a simple shader;
+* Mouse event handling for panning and zooming the image;
+* Resize event handling to fit Micrio to the desired `<canvas>` HTML element
+
+You can see this version running here: https://b.micr.io/_test/wasm/index.html
+
+
+
+### 3.3. First Results
+
+
+
+
+### 3.3. The Rewrite (2)
+
+So, with a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client. I knew at this point that WebAssembly is really powerful for CPU-intense jobs. Micrio is doing quite some computations like deciding which image tiles are inside your screen, so this would be a good starting point.
 
