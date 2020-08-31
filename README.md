@@ -193,5 +193,7 @@ As the developer, you are **100%** in control of this memory. Micrio is an excel
 
 And the cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object! So if WebAssembly creates an array of vertices in 3D space, and JavaScript can have a *casted view* of those using `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and UV/normal buffers!
 
-That means that the output of WebAssembly is **directly connected** to WebGL to JavaScript *just once*, without any JavaScript interference during rendering.
+That means that the output of WebAssembly is **directly connected** to WebGL's input by JavaScript *just once*, at initialization.
 
+
+![JavaScript directly connecting WebAssembly output to WebGL input](img/connoct.jpg)
