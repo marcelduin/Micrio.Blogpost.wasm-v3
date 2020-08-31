@@ -1,6 +1,6 @@
 # Micrio v3: The Road From JavaScript To WebAssembly
+### From JavaScript to AssemblyScript in 4 iterations
 
-## Or: How I Learned to Stop Scripting and Love the Binary
 
 
 ## Table of Contents
@@ -91,7 +91,7 @@ The largest struggle of this was picking up `C++` again, never having used it fo
 
 * A virtual camera and all necessary viewing logic;
 * Image tiles downloading;
-* Image using WebGL(/OpenGL) using a simple shader;
+* Rendering using WebGL(/OpenGL) using a simple shader;
 * Mouse event handling for panning and zooming the image;
 * Resize event handling to fit Micrio to the desired `<canvas>` HTML element
 
@@ -124,5 +124,19 @@ However, it's extremely neat that there is a `C++`-port of Micrio that would run
 
 ### 3.4. The Rewrite: AssemblyScript
 
-Fast forward a few months, to just after the WebAssembly Summit in Mountain View in Febuary 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client. I knew at this point that WebAssembly is really powerful for CPU-intense jobs. Micrio is doing quite some computations like deciding which image tiles are inside your screen, so this would be a good starting point.
+Fast forward a few months, to just after the WebAssembly Summit in Mountain View in Febuary 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client a second time.
+
+During the WebAssembly conference, I was very impressed by a [synth demo](https://www.youtube.com/watch?v=C8j_ieOm4vE) written in **[AssemblyScript](https://www.assemblyscript.org/)**, a language created specifically for WebAssembly, using the TypeScript syntax. Basically you can write (near) TypeScript, which compiles to a `.wasm`-file. And the great thing-- it's all installed using `npm`, so getting it up and running and compiling your program is super easy! Goodbye `Makefile`!
+
+This time, I wanted to see if it was possible to only let a small part of Micrio run inside WebAssembly, and still use most of the JavaScript that was already inside the client. *How small can we get it?* I decided to focus on a subset of camera functions, such as translating screen coordinates to image coordinates and vice versa. So this time no rendering, event handling, and writing shaders.
+
+The result: a `3KB` file containing some basic math functions, that take an input and returns an output. AssemblyScript offers you some *glue-tooling* by providing its own [Loader](https://www.assemblyscript.org/loader.html), which will deal with importing the binary file and being able to call them.
+
+However, with a bit of tinkering, and since I really wanted to keep it as clean as possible, I decided to simply do the glueing myself this time by using the JavaScript [WebAssembly API](https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API). And it turns out, this is super easy: simply use the `fetch` API to load your compiled `.wasm`-file, cast it as an `ArrayBuffer`, and use the `WebAssembly.instantiate()` function to get it up and running.
+
+The compiled binary will then offer an `exports` object, containing the functions that you have written in the AssemblyScript file, which you can immediately call from JavaScript as if they were normal functions. Which made me immediately realise something else:
+
+**WebAssembly is running synchronously to JavaScript**
+
+Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would require be `async`. Nope, the WASM-functions you call will have their return value available immediately! *This is, like, powerful stuff*!
 
