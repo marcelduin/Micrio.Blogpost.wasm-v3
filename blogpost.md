@@ -5,39 +5,39 @@
 
 ## Table of Contents
 
-1. **Introduction**
+1. **Introduction**:
 What is Micrio, what is this article about, setting constraints: client side app migrating from JS to AssemblyScript//WebAssembly.
 
-2. **Current Situation**
+2. **Current Situation**:
 Micrio 2.9, short history, techstack, browser compatibility.
 
-3. **(WebAssembly)[#3-webassembly]**
+3. **[WebAssembly](#3-webassembly)**
 
-  1. **(The Discovery)[#31-the-discovery]**
-  Asm.js old demos, WASM summit at Google Feb 2020
+	1. **[The Discovery](#31-the-discovery)**:
+	Asm.js old demos, WASM summit at Google Feb 2020
 
-  2. **(The Rewrite)[#32-the-rewrite]**
-  The initial application of WASM to Micrio 2.9
+	2. **[The Rewrite](#32-the-rewrite)**:
+	The initial application of WASM to Micrio 2.9
 
-  3. **The Realization**
-  The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
+	3. **The Realization**:
+	The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
 
-  4. **The Rewrite**
-  4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
+	4. **The Rewrite**:
+	4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
-  5. **The Benchmark**
-  What and how to measure, what to improve
+	5. **The Benchmark**:
+	What and how to measure, what to improve
 
-  6. **The Rewrite**
-  Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
+	6. **The Rewrite**:
+	Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
 
-  7. **The Polish**
-  Finishing touches and real world results
+	7. **The Polish**:
+	Finishing touches and real world results
 
-4. **Conclusions**
+4. **Conclusions**:
 The result: pros and cons. When (not) to use WASM, best practices, thoughts on the future.
 
-5. **Afterthoughts and the future**
+5. **Afterthoughts and the future**:
 Compiling for the web, server microservices using WASM, freedom of choice of programming language, and how it will really change the landscape of technology, the fabric of our world, and might be the ultimate answer of life, the universe, and everything.
 
 
