@@ -25,10 +25,10 @@ Micrio 2.9, short history, techstack, browser compatibility.
 	4. **[The Rewrite (2)](#34-the-rewrite-assemblyscript)**:
 	The initial application of AssemblyScript WASM to Micrio 2.9
 
-	5. **The Realization**:
+	5. **[The Realization](#35-the-realization)**:
 	The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
 
-	6. **The Rewrite (3)**:
+	6. **[The Rewrite (3)](#36-the-rewrite-assemblyscript-webgl)**:
 	4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
 	7. **The Benchmark**:
@@ -71,7 +71,7 @@ Fast forward to March 2017. [WebAssembly is introduced](https://hacks.mozilla.or
 
 To illustrate the importance of its potential, for me as a simple web developer thinking browsers were always competing to be the best and most used browser, I was amazed that *all these browsers have worked together on this*, putting aside their differences.
 
-To be honest, in 2017 I totally missed this. I was introduced to WebAssembly two years later in 2019, when WebAssembly was recognised by the W3C as the fourth official programming language for the web. As soon as I realised there would be a WebAssembly Summit at Google HQ early 2020, I really, *really* wanted to go there to see what's up. I found a colleague at Q42 to join me and in Febuary 2020 we found ourselves in Mountain View, surrounded by an awe-inspiring crowd.
+To be honest, in 2017 I totally missed this. I was introduced to WebAssembly two years later in 2019, when WebAssembly was recognised by the W3C as the fourth official programming language for the web. As soon as I realised there would be a WebAssembly Summit at Google HQ early 2020, I really, *really* wanted to go there to see what's up. I found a colleague at Q42 to join me and in February 2020 we found ourselves in Mountain View, surrounded by an awe-inspiring crowd.
 
 That day was a real eye-opener for me on what WebAssembly can do, was already doing, and the amount of potential it still has to change how the web works. Not only for running compiled code in your browser, but **so much more** (briefly touched upon at the end of this post). You can watch the entire summit [here on YouTube](https://www.youtube.com/watch?v=IBZFJzGnBoU&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK).
 
@@ -122,9 +122,10 @@ Everything added together, the new total of the *base engine* of Micrio was a wh
 However, it's extremely neat that there is a `C++`-port of Micrio that would run natively on Linux and MacOS-systems. And I learned a lot from this.
 
 
+
 ### 3.4. The Rewrite: AssemblyScript
 
-Fast forward a few months, to just after the WebAssembly Summit in Mountain View in Febuary 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client a second time.
+Fast forward a few months, to just after the WebAssembly Summit in Mountain View in February 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client a second time.
 
 During the WebAssembly conference, I was very impressed by a [synth demo](https://www.youtube.com/watch?v=C8j_ieOm4vE) written in **[AssemblyScript](https://www.assemblyscript.org/)**, a language created specifically for WebAssembly, using the TypeScript syntax. Basically you can write (near) TypeScript, which compiles to a `.wasm`-file. And the great thing-- it's all installed using `npm`, so getting it up and running and compiling your program is super easy! Goodbye `Makefile`!
 
@@ -136,7 +137,62 @@ However, with a bit of tinkering, and since I really wanted to keep it as clean 
 
 The compiled binary will then offer an `exports` object, containing the functions that you have written in the AssemblyScript file, which you can immediately call from JavaScript as if they were normal functions. Which made me immediately realise something else:
 
-**WebAssembly is running synchronously to JavaScript**
+**WebAssembly is running synchronously to JavaScript!**
 
 Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would require be `async`. Nope, the WASM-functions you call will have their return value available immediately! *This is, like, powerful stuff*!
 
+Since I now had some extra performing hands on deck for Micrio that was very easy to integrate, I decided to include this minimal WebAssembly binary in the then-stable release of Micrio `2.9`. Though I didn't want an extra HTTP request every time someone loaded the Micrio JS; so I included a `base64` encoded version of the WASM-file *inside* the Micrio JS, and for browsers that support it, auto-loaded that. As a fallback, I still had the original JS-only functions in place.
+
+This approach worked wonderfully. Zero bug reports and weird errors, and (marginal) better performance. The Micrio `2.9`-release has been running WASM for a while already!
+
+
+### 3.5 The Realization
+
+Okay, so, mission succeeded! The heaviest/simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (selecting the tiles to draw, the download logic, all animation functions, and the Canvas2D and WebGL 360&deg; rendering) were still 100% JavaScript.
+
+This is a small summary of my though process for the weeks that followed:
+
+> *Great.*
+>
+> *But there **has** to be more I can do with it*
+>
+> *Can I use it for HTML marker rendering? No -- direct DOM operations are not supported.*
+>
+> *Can I use it to download the image tiles for me with higher performance? No -- WASM by itself has no download capabilities.*
+>
+> *Can I replace the current Micrio schizoid Canvas2D and THREEjs rendering methods using one solution?*
+>
+> *Hmm...*
+
+Yes; yes I could! What if I created my own WebGL renderer, that supports both 2D and 360&deg;?
+
+What is WebGL? To put it oversimplified: a bunch of coordinate-arrays and textures being drawn on your screen using shaders. These arrays are the abstract representation of the zoomable images with individual tiles.
+
+**What if I moved the entire rendering logic to AssemblyScript?**
+
+So kind of like the C++ emscripten implementation, but this time using the lean WebAssembly approach: only replacing parts of my JavaScript, maintaining Micrio's own event handlers and module (markers, tours, audio) logic.
+
+
+
+### 3.6 The Rewrite: AssemblyScript + WebGL
+
+_Third time's a charm._
+
+This iteration, I used what I've learned in my previous two iterations:
+
+1. **It's possible to have the entire rendering logic inside WebAssembly**
+2. **It's possible to combine JS en WebAssembly fluently**
+
+So, I went back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and THREEjs implementations, not only improving performance, but being able to use *a lot* less code.
+
+**A word about WebAssembly's memory usage.**
+
+WebAssembly runs within its own sandbox, using its own request amount of memory. For instance, a WebAssembly program can request `16MB` of memory to work with. This memory is assigned by the browser, and can be fully used by your WebAssembly program.
+
+As the developer, you are **100%** in control of this memory. Micrio is an excellent case where the amount of memory needed to handle the zoomable image logic can be precalculated. So it's entirely possible to have a WebAssembly program that requires *zero* garbage collection; ie. runs without any external optimizations.
+
+And the cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object! So any one byte that is written by WebAssembly, is immediately accessible using (partial) representations such as `Float64Array` or `Float32Array`. 
+
+So if WebAssembly creates an array of vertices in 3D space, and JavaScript can have a *casted* view of those using `Float32Array`, these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and UV/normal buffers!
+
+That means that the output of WebAssembly is simply **directly connected** to WebGL to JavaScript once, without any JavaScript interference during rendering!
