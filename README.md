@@ -187,12 +187,11 @@ So, I went back to the drawing board. What I was going to make was a single WebG
 
 **A word about WebAssembly's memory usage.**
 
-WebAssembly runs within its own sandbox, using its own request amount of memory. For instance, a WebAssembly program can request `16MB` of memory to work with. This memory is assigned by the browser, and can be fully used by your WebAssembly program.
+WebAssembly runs within its own sandbox, using its own requested amount of memory. For instance, a WebAssembly program can request `16MB` of memory to work with. This memory is assigned by the browser, and can be fully used by your WebAssembly program.
 
 As the developer, you are **100%** in control of this memory. Micrio is an excellent case where the amount of memory needed to handle the zoomable image logic can be precalculated. So it's entirely possible to have a WebAssembly program that requires *zero* garbage collection; ie. runs without any external optimizations.
 
-And the cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object! So any one byte that is written by WebAssembly, is immediately accessible using (partial) representations such as `Float64Array` or `Float32Array`. 
+And the cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object! So if WebAssembly creates an array of vertices in 3D space, and JavaScript can have a *casted view* of those using `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and UV/normal buffers!
 
-So if WebAssembly creates an array of vertices in 3D space, and JavaScript can have a *casted* view of those using `Float32Array`, these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and UV/normal buffers!
+That means that the output of WebAssembly is **directly connected** to WebGL to JavaScript *just once*, without any JavaScript interference during rendering.
 
-That means that the output of WebAssembly is simply **directly connected** to WebGL to JavaScript once, without any JavaScript interference during rendering!
