@@ -28,7 +28,7 @@ In this article, a lot of technical terms will be used. While I can't detail 100
 
 * **Canvas2D**: [**Canvas2D**](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D), next to WebGL, is a browser drawing technique for drawing flat, 2D graphics;
 
-* **Array**: An **array** is nothing but a long, *long* list of numbers used in coding.
+* **Array**: An **array** is nothing but a list of something, used in programming. In this article, all mentions of *arrays* are long, *very long* lists of numbers, like vector coordinates.
 
 
 
