@@ -261,7 +261,7 @@ This iteration, I used what I've learned in my previous two iterations:
 1. **It's possible to have the entire rendering logic inside WebAssembly**
 2. **It's possible to combine JS en WebAssembly fluently**
 
-Back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and three.js implementations, not only (hopefully) improving performance, but being able to throw away *a lot* of JS code.
+Back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and three.js implementations, not only (hopefully) improving performance, but being able to throw away *a lot* of JS code and do away with the three.js dependency.
 
 ## 6.1. Connecting WebAssembly's memory to WebGL
 
@@ -321,12 +321,14 @@ In the end, both the 2D and 360&deg; images result in a single array buffer usea
 
 ### 6.2.4. Rendering the required tiles
 
-This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All I need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
+This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All you need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
 The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, which I will spare you the details of here.
 
-All I need to know in AssemblyScript are the dimensions of your browser window, how the virtual camera is positioned, to return an array of `start` and `length` indices to WebGL, to draw the tiles:
+All I need to know in AssemblyScript are the dimensions of your browser window, and how the virtual camera is positioned and zoomed in, to return an array of `start` and `length` indices to WebGL, to draw the tiles:
 
 ![The WebGL tile drawing function](img/drawtile.png "The literal tile drawing function")
 
-**Note**: the actual WebGL rendering function is called from **inside** AssemblyScript. Yes, it is totally possible to call JavaScript-functions from inside WebAssembly!
+**Note**: This JavaScript function, the actual WebGL rendering function, is called from **inside** AssemblyScript. Yes, it is totally possible to call JavaScript-functions from inside your running WebAssembly functions!
+
+This makes JavaScript a mere **puppet** of WebAssembly. Which is friggin' awesome.
