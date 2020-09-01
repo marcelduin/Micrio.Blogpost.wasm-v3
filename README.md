@@ -1,5 +1,5 @@
 # Micrio v3: The Road From JavaScript To WebAssembly &amp; WebGL using AssemblyScript
-## From JavaScript to AssemblyScript in 3 iterations
+## From JavaScript (Canvas2D &amp; three.js/WebGL) to AssemblyScript + WebGL in 3 iterations
 
 
 # Abstract
@@ -203,9 +203,9 @@ This time, I wanted to see if it was possible to only let a small part of Micrio
 
 ![Simple camera functions in AssemblyScript](img/assemblyscript.png "My First AssemblyScript")
 
-The result: a `3KB` file containing some basic math functions, that take an input and return an output. AssemblyScript offers you some *glue-tooling* by providing its own [Loader](https://www.assemblyscript.org/loader.html), which will deal with importing the binary file and being able to call them.
+The result: a 3KB binary containing some basic math functions, that take an input and return an output. AssemblyScript offers you some *glue-tooling* by providing its own [Loader](https://www.assemblyscript.org/loader.html), which will deal with importing the binary file and being able to call them.
 
-However, this is optional and I ended up using the JavaScript [WebAssembly API](https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API). And it turns out, this is super easy: simply use the `fetch` API to load your compiled `.wasm`-file, cast it as an `ArrayBuffer`, and use the `WebAssembly.instantiate()` function to get it up and running.
+However, this is optional and I ended up using the JavaScript [WebAssembly API](https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API), *neat*. And it turns out, this is super easy: simply use the `fetch` API to load your compiled `.wasm`-file, cast it as an `ArrayBuffer`, and use the `WebAssembly.instantiate()` function to get it up and running.
 
 ![Loading a wasm file](img/instantiate.png "This is awesome")
 
