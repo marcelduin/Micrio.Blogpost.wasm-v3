@@ -15,6 +15,9 @@ Micrio is [...]
 1. **[Introduction](#1-introduction)**:
 What is Micrio, what is this article about, setting constraints: client side app migrating from JS to AssemblyScript//WebAssembly.
 
+	1. **[Terms used](#11-terms-used)**:
+	Terms used throughout this article
+
 2. **[Current Situation](#2-the-current-situation)**:
 Micrio 2.9, short history, techstack, browser compatibility.
 
@@ -80,6 +83,23 @@ Basically, this means you can run compiled code written in a variety of programm
 This section will be the tale of my discovery of WebAssembly, and the journey to migrating the 2.9 Micrio version written in plain JavaScript to WebAssembly as much as possible.
 
 
+## 1.1. Terms used
+
+In this post, a lot of technical terms will be used. While I can't detail 100% of them, here is a list of the most important terms to understand:
+
+* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it kind of *streams* a very large image to the viewer's browser, by looking at which parts of the main image the user is looking at. One of those mini-parts will be referred to as a **tile** in this document;
+
+* **JavaScript** (JS) and **TypeScript**: **JavaScript** is a basic programming language that your browser understands. It powers most of the interactive web. **TypeScript** is a language built on top of JavaScript, to make the life of web developers easier;
+
+* **WebGL**: **WebGL** is a browser technology for being able to draw 3D graphics in your web browser. It has a very high performance, since it uses the same underlying tech as a lot of 3D games use. [It has been released in 2011](https://en.wikipedia.org/wiki/WebGL);
+
+* [**three.js**](https://threejs.org): **three.js** is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
+
+* **Canvas2D**: **[Canvas2D](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D)**, next to WebGL, is a browser drawing technique for drawing flat, 2D graphics;
+
+* **Array**: An **array** is nothing but a long, *long* list of numbers used in coding.
+
+
 # 2. The Current Situation
 
 Micrio 2.9, blabla
@@ -89,7 +109,7 @@ Micrio 2.9, blabla
 
 Already back in 2013, a [demo was released](https://www.youtube.com/watch?v=BV32Cs_CMqo) by the Mozilla team running Unreal Engine 3 in the Firefox browser at 60fps, using a port of the engine made ready for the web in only 4 days of work.
 
-This was the first application I saw of [asm.js](https://en.wikipedia.org/wiki/Asm.js) -- allowing compiled code to run inside your browser at near-native speeds, using a super-optimized CPU-friendly subset of JavaScript. You could get this to work by compiling to [LLVM](https://en.wikipedia.org/wiki/LLVM)-compatible formats using for instance [emscripten](https://emscripten.org/) for `C/C++`-code. 
+This was the first application I saw of [asm.js](https://en.wikipedia.org/wiki/Asm.js) -- allowing compiled code to run inside your browser at near-native speeds, using a super-optimized CPU-friendly subset of JavaScript. You could get this to work by compiling to [LLVM](https://en.wikipedia.org/wiki/LLVM)-compatible formats using for instance [emscripten](https://emscripten.org/) for C/C++-code. 
 
 This was a definite game changer for the web and left me wanting to try it out myself for the longest time (*spoiler: it took 6 years*). It was also picked up brilliantly by the major browser engines, each in their own optimizing way.
 
@@ -206,7 +226,7 @@ This approach worked wonderfully. Zero weird bugs and errors, and (marginal) bet
 
 ## 5.4. The Realization
 
-Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and THREEjs/WebGL for 360&deg; images) was still 100% JavaScript.
+Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and three.js/WebGL for 360&deg; images) was still 100% JavaScript.
 
 This is a small summary of my though process for the weeks that followed:
 
@@ -218,13 +238,13 @@ This is a small summary of my though process for the weeks that followed:
 >
 > *Can I use it to download the image tiles for me with higher performance? No -- WASM by itself has no download capabilities.*
 >
-> *Can I replace the current Micrio schizoid Canvas2D and THREEjs rendering methods using one solution?*
+> *Can I replace the current Micrio schizoid Canvas2D and three.js rendering methods using one solution?*
 >
 > *Hmm...* (this phase lasted about 2 weeks, going to bed and waking up with it)
 
 Yes; yes I could! What if I created my own WebGL renderer, that supports both 2D and 360&deg;?
 
-What is WebGL? To put it oversimplified: it takes a bunch of coordinate-arrays and textures and draws them on your screen using [shaders](https://en.wikipedia.org/wiki/Shader). These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
+What is WebGL under the hood? To put it oversimplified: it takes a bunch of coordinate-arrays and textures and draws them on your screen using [shaders](https://en.wikipedia.org/wiki/Shader). These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
 
 **What if I moved the entire rendering logic to AssemblyScript?**
 
@@ -241,7 +261,7 @@ This iteration, I used what I've learned in my previous two iterations:
 1. **It's possible to have the entire rendering logic inside WebAssembly**
 2. **It's possible to combine JS en WebAssembly fluently**
 
-Back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and THREEjs implementations, not only (hopefully) improving performance, but being able to throw away *a lot* of JS code.
+Back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and three.js implementations, not only (hopefully) improving performance, but being able to throw away *a lot* of JS code.
 
 ## 6.1. Connecting WebAssembly's memory to WebGL
 
@@ -264,7 +284,7 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 ## 6.2. Doing the hard work
 
-Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using THREEjs/WebGL, and rewrite it in such a way that all that code is replaced in AssemblyScript.
+Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL, and rewrite it in such a way that all that code is replaced in AssemblyScript.
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
@@ -282,15 +302,15 @@ Now, the geometry for a 2D image is not that difficult. It is a flat plane insid
 
 
 ### 6.2.3. 360&deg; images
-For the 360&deg; images, this proved to be a larger challenge. Where THREEjs has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
+For the 360&deg; images, this proved to be a larger challenge. Where three.js has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
 
 I really, really wish I paid better attention in school then.
 
-Where 2D images are easy since they are, well, 2D, creating a 360&deg; sphere comes with a whole range of new complexities. A tile cannot simple be a rectangle in 3d-space, because it would look very wonky for the tiles on a lower zoom level:
+Where 2D images are easy since they are, well, 2D, creating a 360&deg; sphere comes with a whole range of new complexities. An image tile cannot simply be a rectangle in 3d-space, because it would look very wonky for the tiles on a lower zoom level:
 
 ![Low vs high detailed geometry](img/360-geom.png "Left is basic rectangle geometry, right is interpolated")
 
-So a single tile cannot consist of a single rectangle; it has to be broken up into multiple segments to make it look like a smooth sphere inside WebGL. Instead of representing it as 6 vertex coordinates, this number is now `numberOfSegments * numberOfSegments * 2 * 3`, based on the zoom level of the tile to be drawn.
+So it has to be broken up into multiple segments to make it look like a smooth part of a sphere inside WebGL. Instead of representing it as 6 vertex coordinates, this number is now `numberOfSegments * numberOfSegments * 2 * 3`, based on the zoom level of the tile to be drawn.
 
 It all makes sense. But it took a long time before I got it right; not even mentioning the separate texture UV buffers here.
 
