@@ -1,5 +1,5 @@
-# Micrio v3: The Road From JavaScript To WebAssembly
-### From JavaScript to AssemblyScript in 4 iterations
+# Micrio v3: The Road From JavaScript To AssemblyScript Using WebAssembly
+### From JavaScript to AssemblyScript in 3 iterations
 
 
 
@@ -30,6 +30,10 @@ Micrio 2.9, short history, techstack, browser compatibility.
 
 	6. **[The Rewrite (3)](#36-the-rewrite-assemblyscript-webgl)**:
 	4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
+
+		1. **[The Rewrite (3)](#361-connecting-webassemblys-memory-to-webgl)**:
+		Taking JS out of the equasion
+
 
 	7. **The Benchmark**:
 	What and how to measure, what to improve
@@ -83,7 +87,7 @@ At this point, I still didn't really have a clear image of where WebAssembly sta
 
 It turns out, emscripten already had great compatibility for [libsdl](https://www.libsdl.org/): a low-level audio, keyboard/mouse input, and OpenGL library. Which is awesome, because I could write my code using this very well documented library, even including mouse and key inputs and WebGL rendering. Since I was also working with downloading images, I also used the [stb_image.h](https://github.com/nothings/stb) image library.
 
-![C++ in the 21st century](img/cpp.png)
+![Setting up SDL and OpenGL](img/cpp.png "C++ in the 21st century")
 
 
 The largest struggle of this was picking up `C++` again, never having used it outside of hobby scope many years ago. But after a few days of cursing and second guessing myself, I had a working first version with all of the most important features written with help of the SDL library:
@@ -106,7 +110,7 @@ As incredibly awesome it was to see Micrio in `C++` running smoothly in my brows
 #### 1. Coding C++ felt old-fashioned
 Writing C++ felt like going back in time. Incredibly powerful and fully proven, but also archaic, especially as a web developer. I spent more time fiddling with making an optimized `Makefile` than I care to admit.
 
-![The emscripten C++ Makefile](img/makefile.png)
+![The emscripten C++ Makefile](img/makefile.png "( ͡° ͜ʖ ͡°)")
 
 #### 2. The compiled `.wasm` binary was very large
 As great as the help of `libsdl` and `stb_image.h` were to let me use OpenGL and JPG image functions, as much did they add to the final compiled binary file. Even with all `emcc` compiler optimizations (which can even use the awesome `closure` JS compiler), the resulting WebAssembly binary file was 760KB; compared to the JavaScript version of Micrio being around 240KB, this was a major setback. These libraries packed a lot of functionalities that were not necessary for Micrio, but were still included in the compiled version.
@@ -132,13 +136,13 @@ During the WebAssembly conference, I was very impressed by a [synth demo](https:
 
 This time, I wanted to see if it was possible to only let a small part of Micrio run inside WebAssembly, and still use most of the JavaScript that was already inside the client. *How small can we get it?* I decided to focus on a subset of camera functions, such as translating screen coordinates to image coordinates and vice versa. So this time no rendering, event handling, or writing shaders.
 
-![My First AssemblyScript](img/assemblyscript.png)
+![Simple camera functions in AssemblyScript](img/assemblyscript.png "My First AssemblyScript")
 
 The result: a `3KB` file containing some basic math functions, that take an input and return an output. AssemblyScript offers you some *glue-tooling* by providing its own [Loader](https://www.assemblyscript.org/loader.html), which will deal with importing the binary file and being able to call them.
 
 However, this is optional and I ended up using the JavaScript [WebAssembly API](https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API). And it turns out, this is super easy: simply use the `fetch` API to load your compiled `.wasm`-file, cast it as an `ArrayBuffer`, and use the `WebAssembly.instantiate()` function to get it up and running.
 
-![Loading a wasm file](img/instantiate.png)
+![Loading a wasm file](img/instantiate.png "This is awesome")
 
 The compiled binary will then offer an `exports` object, containing the functions that you have written in the AssemblyScript file, which you can immediately call from JavaScript as if they were normal functions. Which made me immediately realise something else:
 
@@ -148,7 +152,7 @@ Having worked with WebWorkers before, I honestly thought that WebAssembly would 
 
 Since I now had some extra performing hands on deck for Micrio that was very easy to integrate, I decided to include this minimal WebAssembly binary in the then-stable release of Micrio (2.9). Though I didn't want an extra HTTP request for the WASM binary every time someone loaded the Micrio JS; so I included a `base64` encoded version of the WASM-file *inside* the Micrio JS, and for browsers that support it, auto-loaded that. As a fallback, I still had the original JS-only functions in place.
 
-![WASM as base64 embedded in JS](img/b64.png)
+![WASM as base64 embedded in JS](img/b64.png "Somehow this feels like cheating")
 
 This approach worked wonderfully. Zero weird bugs and errors, and (marginal) better performance. The Micrio 2.9-release has been running WASM for a while already!
 
