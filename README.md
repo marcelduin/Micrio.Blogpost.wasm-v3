@@ -213,7 +213,7 @@ The compiled binary will then offer an `exports` object, containing the function
 
 Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would be `async`. Nope, the WASM-functions you call will have their return value available immediately!
 
-*This is, like, powerful stuff*!
+[*This is, like, powerful stuff*!](https://www.assemblyscript.org/exports-and-imports.html#exports)
 
 ## 5.3. Bundling the compiled WASM inside the JS file
 
@@ -329,6 +329,6 @@ All I need to know in AssemblyScript are the dimensions of your browser window, 
 
 ![The WebGL tile drawing function](img/drawtile.png "The literal tile drawing function")
 
-**Note**: This JavaScript function, the actual WebGL rendering function, is called from **inside** AssemblyScript. Yes, it is totally possible to call JavaScript-functions from inside your running WebAssembly functions!
+**Note**: This JavaScript function, the actual WebGL rendering function, is called from **inside** AssemblyScript. Yes, [it is totally possible to call JavaScript-functions from inside your running WebAssembly functions](https://www.assemblyscript.org/exports-and-imports.html#exports)!
 
 This makes JavaScript a mere **puppet** of WebAssembly. Which is friggin' awesome.
