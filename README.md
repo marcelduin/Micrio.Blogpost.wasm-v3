@@ -1,62 +1,66 @@
 # Micrio v3: The Road From JavaScript To AssemblyScript Using WebAssembly
-### From JavaScript to AssemblyScript in 3 iterations
+## From JavaScript to AssemblyScript in 3 iterations
+
+
+# Abstract
+
+WebAssembly (WASM) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
+
+Micrio is [...]
 
 
 
-## Table of Contents
+# Table of Contents
 
-1. **Introduction**:
+1. **[Introduction](#1-introduction)**:
 What is Micrio, what is this article about, setting constraints: client side app migrating from JS to AssemblyScript//WebAssembly.
 
-2. **Current Situation**:
+2. **[Current Situation](#2-the-current-situation)**:
 Micrio 2.9, short history, techstack, browser compatibility.
 
-3. **[WebAssembly](#3-webassembly)**
+3. **[The Discovery](#3-the-discovery)**:
+Asm.js old demos, WASM summit at Google Feb 2020
 
-	1. **[The Discovery](#31-the-discovery)**:
-	Asm.js old demos, WASM summit at Google Feb 2020
+4. **[The Rewrite: C++ and emscripten](#4-the-rewrite-c-and-emscripten)**:
+From JS to C++
 
-	2. **[The Rewrite (1)](#32-the-rewrite-c-and-emscripten)**:
-	From JS to C++
-
-	3. **[First Results](#33-first-results)**:
+	1. **[First Results](#41-first-results)**:
 	How C++ was not the perfect choice
 
-	4. **[The Rewrite (2)](#34-the-rewrite-assemblyscript)**:
-	The initial application of AssemblyScript WASM to Micrio 2.9
+5. **[The Rewrite: AssemblyScript](#5-the-rewrite-assemblyscript)**:
+The initial application of AssemblyScript WASM to Micrio 2.9
 
-	5. **[The Realization](#35-the-realization)**:
-	The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
+6. **[The Realization](#6-the-realization)**:
+The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
 
-	6. **[The Rewrite (3)](#36-the-rewrite-assemblyscript-webgl)**:
-	4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
+7. **[The Rewrite: AssemblyScript &amp; WebGL](#7-the-rewrite-assemblyscript-webgl)**:
+4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
-		1. **[Directly connecting WebAssembly's Memory to WebGL](#361-connecting-webassemblys-memory-to-webgl)**:
-		Taking JS out of the equasion
+	1. **[Directly connecting WebAssembly's Memory to WebGL](#71-connecting-webassemblys-memory-to-webgl)**:
+	Taking JS out of the equasion
 
-		2. **[Doing the hard work](#362-doing-the-hard-work)**:
-		Back to square zero
+	2. **[Doing the hard work](#72-doing-the-hard-work)**:
+	Back to square zero
 
 
-	7. **The Benchmark**:
-	What and how to measure, what to improve
+8. **The Benchmark**:
+What and how to measure, what to improve
 
-	8. **The Rewrite (4)**:
-	Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
+9. **The Rewrite: Optimizing everything**:
+Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
 
-	9. **The Satisfaction**:
-	Finishing touches and real world results
+10. **The Satisfaction**:
+Finishing touches and real world results
 
-4. **Conclusions**:
+11. **Conclusions**:
 The result: pros and cons. When (not) to use WASM, best practices, thoughts on the future.
 
-5. **Afterthoughts and the future**:
+12. **Afterthoughts and the future**:
 Compiling for the web, server microservices using WASM, freedom of choice of programming language, and how it will really change the landscape of technology, the fabric of our world, and might be the ultimate answer of life, the universe, and everything.
 
 
 
-
-## 3. WebAssembly
+# 1. Introduction
 
 WebAssembly (WASM) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
@@ -65,8 +69,12 @@ Basically, this means you can run compiled code written in a variety of programm
 This section will be the tale of my discovery of WebAssembly, and the journey to migrating the 2.9 Micrio version written in plain JavaScript to WebAssembly as much as possible.
 
 
+# 2. The Current Situation
 
-### 3.1. The Discovery
+Micrio 2.9, blabla
+
+
+# 3. The Discovery
 
 Already back in 2013, a [demo was released](https://www.youtube.com/watch?v=BV32Cs_CMqo) by the Mozilla team running Unreal Engine 3 in the Firefox browser at 60fps, using a port of the engine made ready for the web in only 4 days of work.
 
@@ -82,7 +90,7 @@ That day was a real eye-opener on what WebAssembly can do, was already doing, an
 
 
 
-### 3.2. The Rewrite: C++ and emscripten
+# 4. The Rewrite: C++ and emscripten
 
 Prior to the WebAssembly Summit, and to get to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in `C` or `C++`, and compile it to a binary `.wasm`-file, that your browser can natively run. 
 
@@ -104,21 +112,20 @@ The largest struggle of this was picking up `C++` again, never having used it ou
 You can see this version running here: https://b.micr.io/_test/wasm/index.html
 
 
-
-### 3.3. First Results
+## 4.1. First Results
 
 As incredibly awesome it was to see Micrio in `C++` running smoothly in my browser, and even handing all the user's input, there were a few reservations, which left me with an unsatisfied feeling.
 
 
-#### 1. Coding C++ felt old-fashioned
+### 1. Coding C++ felt old-fashioned
 Writing C++ felt like going back in time. Incredibly powerful and fully proven, but also archaic, especially as a web developer. I spent more time fiddling with making an optimized `Makefile` than I care to admit.
 
 ![The emscripten C++ Makefile](img/makefile.png "( ͡° ͜ʖ ͡°)")
 
-#### 2. The compiled `.wasm` binary was very large
+### 2. The compiled `.wasm` binary was very large
 As great as the help of `libsdl` and `stb_image.h` were to let me use OpenGL and JPG image functions, as much did they add to the final compiled binary file. Even with all `emcc` compiler optimizations (which can even use the awesome `closure` JS compiler), the resulting WebAssembly binary file was 760KB; compared to the JavaScript version of Micrio being around 240KB, this was a major setback. These libraries packed a lot of functionalities that were not necessary for Micrio, but were still included in the compiled version.
 
-#### 3. TIL: A *glue* file
+### 3. TIL: A *glue* file
 This is the part where I learnt where the limits of WebAssembly start and finish. **WebAssembly is not a magical self-contained binary that lets you run full applications out of the box**. It actually needs to be *bound* to the browser using JavaScript.
 
 Where I thought that all the SDL OpenGL code in C++ would automagically be recognised by the browser: *wrong*. What `emscripten` does, is to take all OpenGL operations from C++, and _converting them_ to WebGL operations your browser can understand.
@@ -131,7 +138,7 @@ However, it's extremely neat that there is a C++ port of Micrio that would run n
 
 
 
-### 3.4. The Rewrite: AssemblyScript
+# 5. The Rewrite: AssemblyScript
 
 Fast forward a few months, to just after the WebAssembly Summit in Mountain View in February 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client a second time.
 
@@ -160,7 +167,7 @@ Since I now had some extra performing hands on deck for Micrio that was very eas
 This approach worked wonderfully. Zero weird bugs and errors, and (marginal) better performance. The Micrio 2.9-release has been running WASM for a while already!
 
 
-### 3.5 The Realization
+# 6. The Realization
 
 Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and WebGL for 360&deg; images) was still 100% JavaScript.
 
@@ -188,7 +195,7 @@ So kind of like the C++ emscripten implementation, but this time using the lean 
 
 
 
-### 3.6 The Rewrite: AssemblyScript + WebGL
+# 7. The Rewrite: AssemblyScript + WebGL
 
 _Third time's a charm._
 
@@ -199,7 +206,7 @@ This iteration, I used what I've learned in my previous two iterations:
 
 Back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and THREEjs implementations, not only (hopefully) improving performance, but being able to throw away *a lot* of JS code.
 
-#### 3.6.1. Connecting WebAssembly's memory to WebGL
+## 7.1. Connecting WebAssembly's memory to WebGL
 
 WebAssembly runs within its own sandbox, using its own requested amount of memory. For instance, a WebAssembly program can request 16MB of memory to work with. This memory is assigned by the browser, and can be fully used by your WebAssembly program.
 
@@ -218,18 +225,18 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 
 
-#### 3.6.2. Doing the hard work
+## 7.2. Doing the hard work
 
 This is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using THREEjs/WebGL, and rewrite it in such a way that all that logic is ported to AssemblyScript.
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*):
 
-##### Get the logic of the image `tiles` from JS to AssemblyScript
+### Get the logic of the image `tiles` from JS to AssemblyScript
 The input for AssemblyScript are only image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
 WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tiles should be united in a single vertex buffer having static positions, which WebGL will draw relative to a virtual camera's 3D Matrix.
 
-##### 2D images
+### 2D images
 Now, the geometry for a 2D image is not that difficult. It is a flat plane inside the 3D space; all logic can be written as 2D coordinates, where `z` is always 0. A single tile is simply defined as a flat plane, with 6 vertex coordinates (your GPU thinks in *triangles*, so every rectangle consists of `2 * 3` vertex coordinates).
 
 ![A rectangle represented as triangles in GL](img/triangle.png)
@@ -237,7 +244,7 @@ Now, the geometry for a 2D image is not that difficult. It is a flat plane insid
 *Courtesy of [OpenGLBook.com](https://openglbook.com/chapter-2-vertices-and-shapes.html)*
 
 
-#### 360&deg; images
+### 360&deg; images
 For the 360 images, this proved to be a larger challenge. Where THREEjs has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360 sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
 
 I really, really wish I paid better attention in school then.
@@ -255,9 +262,9 @@ It all makes sense. But it took a long time before I got it right; not even ment
 All this results in a single array buffer useable by WebGL, generated at runtime.
 
 
-##### Getting WebGL to only render the tiles that are inside your screen
+### Getting WebGL to only render the tiles that are inside your screen
 
-This is what's so cool about WebGL: you can tell it to render certain *parts* of your geometry buffer. All I need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
+This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All I need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
 The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, which would definitely benefit from the move of JS to AssemblyScript.
 
