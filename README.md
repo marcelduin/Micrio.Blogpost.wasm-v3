@@ -22,7 +22,7 @@ In this article, a lot of technical terms will be used. While I can't detail 100
 
 * **TypeScript**: A language built on top of JavaScript, to make the life of web developers easier;
 
-* **WebGL**: [**WebGL**](https://en.wikipedia.org/wiki/WebGL) is a browser technology for being able to draw 3D graphics in your web browser. It has a very high performance, since it uses the same underlying tech as a lot of 3D games use;
+* **WebGL**: [**WebGL**](https://en.wikipedia.org/wiki/WebGL) is a browser technology for being able to draw 3D graphics in your web browser. It uses the same underlying tech as a lot of 3D games use, directly utilizing your GPU instead of CPU;
 
 * **three.js**: [**three.js**](https://threejs.org) is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
 
@@ -282,7 +282,7 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 ## 6.2. Doing the hard work
 
-Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL, and rewrite it in such a way that all that code is replaced in AssemblyScript.
+Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL, and rewrite it in such a way that all that code is rewritten in AssemblyScript.
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
@@ -300,7 +300,7 @@ Now, the geometry for a 2D image is not that difficult. It is a flat plane insid
 
 
 ### 6.2.3. 360&deg; images
-For the 360&deg; images, this proved to be a larger challenge. Where three.js has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
+For the 360&deg; images, this proved to be a larger challenge. Where three.js has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge to manually do all the work that three.js had been doing for me before.
 
 I really, really wish I paid better attention in school then.
 
@@ -321,7 +321,7 @@ In the end, both the 2D and 360&deg; images result in a single array buffer usea
 
 This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All you need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
-The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, which I will spare you the details of here.
+The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, of which I will spare you the details here.
 
 All I need to know in AssemblyScript are the dimensions of your browser window, and how the virtual camera is positioned and zoomed in, to return an array of `start` and `length` indices to WebGL, to draw the tiles:
 
