@@ -191,7 +191,7 @@ The compiled binary will then offer an `exports` object, containing the function
 
 **WebAssembly is running synchronously to JavaScript!**
 
-Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would require be `async`. Nope, the WASM-functions you call will have their return value available immediately!
+Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would be `async`. Nope, the WASM-functions you call will have their return value available immediately!
 
 *This is, like, powerful stuff*!
 
