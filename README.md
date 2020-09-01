@@ -1,4 +1,4 @@
-# Micrio v3: The Road From JavaScript To AssemblyScript Using WebAssembly
+# Micrio v3: The Road From JavaScript To WebAssembly &amp; WebGL using AssemblyScript
 ## From JavaScript to AssemblyScript in 3 iterations
 
 
@@ -41,6 +41,11 @@ The *“But can it do more for Micrio?”* process -- how it took 4 weeks to com
 
 	2. **[Doing the hard work](#72-doing-the-hard-work)**:
 	Back to square zero
+
+		1. **[Abstracting the tile logic](#721-abstracting-the-image-tile-logic)**
+		2. **[2D images](#722-2d-images)**
+		3. **[360&deg; images](#723-360-images)**
+		4. **[Rendering the required tiles](#724-rendering-the-required-tiles)**
 
 
 8. **The Benchmark**:
@@ -177,7 +182,7 @@ This approach worked wonderfully. Zero weird bugs and errors, and (marginal) bet
 
 # 6. The Realization
 
-Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and WebGL for 360&deg; images) was still 100% JavaScript.
+Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and THREEjs/WebGL for 360&deg; images) was still 100% JavaScript.
 
 This is a small summary of my though process for the weeks that followed:
 
@@ -191,11 +196,11 @@ This is a small summary of my though process for the weeks that followed:
 >
 > *Can I replace the current Micrio schizoid Canvas2D and THREEjs rendering methods using one solution?*
 >
-> *Hmm...* <-- this phase lasted about 2 weeks, going to bed and waking up with it
+> *Hmm...* (this phase lasted about 2 weeks, going to bed and waking up with it)
 
 Yes; yes I could! What if I created my own WebGL renderer, that supports both 2D and 360&deg;?
 
-What is WebGL? To put it oversimplified: it takes a bunch of coordinate-arrays and textures and draws them on your screen using shaders. These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
+What is WebGL? To put it oversimplified: it takes a bunch of coordinate-arrays and textures and draws them on your screen using [shaders](https://en.wikipedia.org/wiki/Shader). These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
 
 **What if I moved the entire rendering logic to AssemblyScript?**
 
@@ -239,7 +244,7 @@ Now the basic setup was known, this is where it became more difficult. I had to 
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
-### 7.2.1. Get the logic of the image `tiles` from JS to AssemblyScript
+### 7.2.1. Abstracting the image tile logic
 The input for AssemblyScript are only image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
 WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tiles should be united in a single vertex buffer having static positions, which WebGL will draw relative to a virtual camera's 3D Matrix.
@@ -270,11 +275,11 @@ It all makes sense. But it took a long time before I got it right; not even ment
 In the end, both the 2D and 360&deg; images result in a single array buffer useable by WebGL, generated at runtime.
 
 
-### 7.2.4. Getting WebGL to only render the tiles that are inside your screen
+### 7.2.4. Rendering the required tiles
 
 This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All I need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
-The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, which would definitely benefit from the move of JS to AssemblyScript.
+The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, which I will spare you the details of here.
 
 All I need to know in AssemblyScript are the dimensions of your browser window, how the virtual camera is positioned, to return an array of `start` and `length` indices to WebGL, to draw the tiles:
 
