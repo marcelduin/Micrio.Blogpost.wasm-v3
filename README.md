@@ -84,9 +84,13 @@ This was a definite game changer for the web and left me wanting to try it out m
 
 Fast forward to March 2017. [WebAssembly is introduced](https://hacks.mozilla.org/2017/03/why-webassembly-is-faster-than-asm-js/) as an even more powerful way to run binary code in your browser. This joint effort by all major browsers (Firefox, Chrome, Safari and Internet Explorer) was focussed on bundling all separate efforts made so far by running compiled code inside the browser. I was blown away to realise that *all these browsers have worked together on this*, putting aside their differences.
 
-Two years later in 2019, WebAssembly was recognised by the W3C as [the fourth official programming language for the web](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en). As soon as I realised there would be a WebAssembly Summit at Google HQ early 2020, I really, *really* wanted to go there to see what's up. I found a colleague at Q42 to join me and in February 2020 we found ourselves in Mountain View, surrounded by an awe-inspiring crowd.
+Two years later in 2019, WebAssembly was recognised by the W3C as [the fourth official programming language for the web](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en). As soon as I realised there would be a [WebAssembly Summit at Google HQ early 2020](https://webassembly-summit.org/), I really, *really* wanted to go there to see what's up. I found a colleague at Q42 to join me and in February 2020 we found ourselves in Mountain View, surrounded by an awe-inspiring crowd.
 
-That day was a real eye-opener on what WebAssembly can do, was already doing, and the amount of potential it still has to change how the web works. Not only for running compiled code in your browser, but **so much more** (briefly touched upon at the end of this post). You can watch the entire summit [here on YouTube](https://www.youtube.com/watch?v=IBZFJzGnBoU&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK).
+That day was a real eye-opener on what WebAssembly can do, was already doing, and the amount of potential it still has to change how the web works. Not only for running compiled code in your browser, but **so much more** (briefly touched upon at the end of this post).
+
+Watch the entire WebAssembly Summit 2020 on YouTube here:
+
+[![WebAssembly Summit 2020](img/wasm-summit.png)](https://www.youtube.com/watch?v=IBZFJzGnBoU&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK).
 
 
 
@@ -94,7 +98,7 @@ That day was a real eye-opener on what WebAssembly can do, was already doing, an
 
 Prior to the WebAssembly Summit, and to get to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in `C` or `C++`, and compile it to a binary `.wasm`-file, that your browser can natively run. 
 
-At this point, I still didn't really have a clear image of where WebAssembly starts and stops, and how autonomously could run inside your browser, so I started a new project from scratch to see if I could make a `C++`-implementation of the basic Micrio logic: a virtual *zoomable* and *pannable* image consisting of a lot of separate tiles, using a virtual camera for displaying only the tiles necessary for what the user is viewing inside your screen.
+At this point, I still didn't really have a clear image of where WebAssembly starts and stops, and how autonomously it could run inside your browser, so I started a new project from scratch to see if I could make a `C++`-implementation of the basic Micrio logic: a virtual *zoomable* and *pannable* image consisting of a lot of separate tiles, using a virtual camera for displaying only the tiles necessary for what the user is viewing inside your screen.
 
 It turns out, emscripten already had great compatibility for [libsdl](https://www.libsdl.org/): a low-level audio, keyboard/mouse input, and OpenGL library. Which is awesome, because I could write my code using this very well documented library, even including mouse and key inputs and WebGL rendering. Since I was also working with downloading images, I also used the [stb_image.h](https://github.com/nothings/stb) image library.
 
@@ -114,7 +118,7 @@ You can see this version running here: https://b.micr.io/_test/wasm/index.html
 
 ## 4.1. First Results
 
-As incredibly awesome it was to see Micrio in `C++` running smoothly in my browser, and even handing all the user's input, there were a few reservations, which left me with an unsatisfied feeling.
+As incredibly awesome it was to see Micrio in C++ running smoothly in my browser, and even handing all the user's input, there were a few reservations, which left me with an unsatisfied feeling.
 
 
 ### 1. Coding C++ felt old-fashioned
@@ -128,6 +132,8 @@ As great as the help of `libsdl` and `stb_image.h` were to let me use OpenGL and
 ### 3. TIL: A *glue* file
 This is the part where I learnt where the limits of WebAssembly start and finish. **WebAssembly is not a magical self-contained binary that lets you run full applications out of the box**. It actually needs to be *bound* to the browser using JavaScript.
 
+![glue clipart](img/glue.png)
+
 Where I thought that all the SDL OpenGL code in C++ would automagically be recognised by the browser: *wrong*. What `emscripten` does, is to take all OpenGL operations from C++, and _converting them_ to WebGL operations your browser can understand.
 
 Same with the `libsdl` mouse and keyboard-inputs: these were **glued** to the browser using an extra JavaScript file that would set event listeners for the specific cases, and send them to the WebAssembly binary. This separate JavaScript file was generated by the emscripten compiler, and had to be included in the HTML alongside the compiled binary `.wasm`-file.
@@ -140,7 +146,7 @@ However, it's extremely neat that there is a C++ port of Micrio that would run n
 
 # 5. The Rewrite: AssemblyScript
 
-Fast forward a few months, to just after the WebAssembly Summit in Mountain View in February 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client a second time.
+Fast forward a few months, to just after the [WebAssembly Summit](https://webassembly-summit.org/) in Mountain View in February 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client a second time.
 
 During the WebAssembly conference, I was very impressed by a [synth demo](https://www.youtube.com/watch?v=C8j_ieOm4vE) written in **[AssemblyScript](https://www.assemblyscript.org/)**, a language created specifically for WebAssembly, using the TypeScript syntax. Basically you can write (near) TypeScript, which compiles to a `.wasm`-binary. And the great thing-- it's all installed using `npm`, so getting it up and running and compiling your program is super easy! Goodbye `Makefile`!
 
