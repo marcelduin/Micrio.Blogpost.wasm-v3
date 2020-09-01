@@ -282,7 +282,7 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 ## 6.2. Doing the hard work
 
-Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL, and rewrite it in such a way that all that code is rewritten in AssemblyScript.
+Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL, and rewrite it in AssemblyScript.
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
