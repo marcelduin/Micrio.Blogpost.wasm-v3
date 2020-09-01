@@ -191,11 +191,11 @@ This is a small summary of my though process for the weeks that followed:
 >
 > *Can I replace the current Micrio schizoid Canvas2D and THREEjs rendering methods using one solution?*
 >
-> *Hmm...*
+> *Hmm...* <-- this phase lasted about 2 weeks, going to bed and waking up with it
 
 Yes; yes I could! What if I created my own WebGL renderer, that supports both 2D and 360&deg;?
 
-What is WebGL? To put it oversimplified: a bunch of coordinate-arrays and textures being drawn on your screen using shaders. These arrays are the abstract representation of the zoomable images with individual tiles.
+What is WebGL? To put it oversimplified: it takes a bunch of coordinate-arrays and textures and draws them on your screen using shaders. These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
 
 **What if I moved the entire rendering logic to AssemblyScript?**
 
@@ -224,7 +224,7 @@ As the developer, you are **100%** in control of this memory. Micrio is an excel
 ![180 bytes of memory for a single 2D tile](img/singletile.png "A single 2D tile takes 180 bytes of memory")
 
 
-The cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object! So if WebAssembly creates an array of vertices in 3D space, and JavaScript can have a *casted view* of those using `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and UV/normal buffers!
+The cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object. So if WebAssembly creates an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and UV/normal buffers.
 
 That means that the output of WebAssembly is **directly connected** to WebGL's input by JavaScript *just once*, at initialization.
 
@@ -235,16 +235,16 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 ## 7.2. Doing the hard work
 
-This is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using THREEjs/WebGL, and rewrite it in such a way that all that logic is ported to AssemblyScript.
+Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using THREEjs/WebGL, and rewrite it in such a way that all that code is replaced in AssemblyScript.
 
-This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*):
+This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
-### Get the logic of the image `tiles` from JS to AssemblyScript
+### 7.2.1. Get the logic of the image `tiles` from JS to AssemblyScript
 The input for AssemblyScript are only image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
 WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tiles should be united in a single vertex buffer having static positions, which WebGL will draw relative to a virtual camera's 3D Matrix.
 
-### 2D images
+### 7.2.2. 2D images
 Now, the geometry for a 2D image is not that difficult. It is a flat plane inside the 3D space; all logic can be written as 2D coordinates, where `z` is always 0. A single tile is simply defined as a flat plane, with 6 vertex coordinates (your GPU thinks in *triangles*, so every rectangle consists of `2 * 3` vertex coordinates).
 
 ![A rectangle represented as triangles in GL](img/triangle.png)
@@ -252,8 +252,8 @@ Now, the geometry for a 2D image is not that difficult. It is a flat plane insid
 *Courtesy of [OpenGLBook.com](https://openglbook.com/chapter-2-vertices-and-shapes.html)*
 
 
-### 360&deg; images
-For the 360 images, this proved to be a larger challenge. Where THREEjs has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360 sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
+### 7.2.3. 360&deg; images
+For the 360&deg; images, this proved to be a larger challenge. Where THREEjs has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
 
 I really, really wish I paid better attention in school then.
 
@@ -267,10 +267,10 @@ It all makes sense. But it took a long time before I got it right; not even ment
 
 ![A vertex buffer as Float32Array](img/vertexbuffer.png)
 
-All this results in a single array buffer useable by WebGL, generated at runtime.
+In the end, both the 2D and 360&deg; images result in a single array buffer useable by WebGL, generated at runtime.
 
 
-### Getting WebGL to only render the tiles that are inside your screen
+### 7.2.4. Getting WebGL to only render the tiles that are inside your screen
 
 This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All I need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
