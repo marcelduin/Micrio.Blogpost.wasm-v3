@@ -31,8 +31,11 @@ Micrio 2.9, short history, techstack, browser compatibility.
 	6. **[The Rewrite (3)](#36-the-rewrite-assemblyscript-webgl)**:
 	4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
-		1. **[The Rewrite (3)](#361-connecting-webassemblys-memory-to-webgl)**:
+		1. **[Directly connecting WebAssembly's Memory to WebGL](#361-connecting-webassemblys-memory-to-webgl)**:
 		Taking JS out of the equasion
+
+		2. **[Doing the hard work](#362-doing-the-hard-work)**:
+		Back to square zero
 
 
 	7. **The Benchmark**:
@@ -208,3 +211,37 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 
 ![JavaScript directly connecting WebAssembly output to WebGL input](img/connoct.jpg)
+
+
+
+#### 3.6.2. Doing the hard work
+
+This is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using THREEjs/WebGL, and rewrite it in such a way that all that logic is ported to AssemblyScript.
+
+This required a few steps, which I will not fully document here since it's out of scope (next blogpost: WebGL?):
+
+##### Get the logic of the image `tiles` from JS to AssemblyScript
+The input for AssemblyScript are only image parameters: a unique ID, an image width, and an image height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings;
+
+##### Going from the Canvas2D and THREEjs model to manually created geometry and texture array buffers
+WebGL in its most basic form gives you practically only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tiles should be united in a single vertex buffer having static positions, which WebGL will draw relative to a virtual camera's 3D Matrix.
+
+Now, the geometry for a 2D image is not that difficult. It is a flat plane inside the 3D space; all logic can be written as 2D coordinates, where `z` is always 0. A single tile is simply defined as a flat plane, with 6 vertex coordinates (your GPU thinks in *triangles*, so every rectangle consists of `2 * 3` vertex coordinates).
+
+For the 360 images, this proved to be a larger challenge. Where THREEjs has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360 sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
+
+I really, really wish I paid better attention in school then.
+
+Where 2D images are easy since they are, well, 2D, creating a 360&deg; sphere comes with a whole range of new complexities. A tile cannot simple be a rectangle in 3d-space, because it would look very wonky for the tiles on a lower zoom level:
+
+![Low vs high detailed geometry](img/360-geom.png "Left is basic rectangle geometry, right is interpolated")
+
+So a single tile cannot consist of a single rectangle; it has to be broken up into multiple segments to make it look like a smooth sphere inside WebGL. Instead of representing it as 6 vertex coordinates, this number is now `numberOfSegments * numberOfSegments * 2 * 3`, based on the zoom level of the tile to be drawn.
+
+It all makes sense. But it took a long time before I got it right; not even mentioning the separate texture UV buffers here.
+
+
+
+##### Getting WebGL to only render the tiles that are inside your screen
+This is what's so cool about WebGL: you can tell it to render certain *parts* of your geometry buffer. All I need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile;
+
