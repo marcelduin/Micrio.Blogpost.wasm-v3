@@ -87,15 +87,17 @@ This section will be the tale of my discovery of WebAssembly, and the journey to
 
 In this post, a lot of technical terms will be used. While I can't detail 100% of them, here is a list of the most important terms to understand:
 
-* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it kind of *streams* a very large image to the viewer's browser, by looking at which parts of the main image the user is looking at. One of those mini-parts will be referred to as a **tile** in this document;
+* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it *streams* a very large image to the viewer's browser by looking at which parts of the main image the user is looking at, and only downloading and showing those. One of those parts is called a **tile**;
 
-* **JavaScript** (JS) and **TypeScript**: **JavaScript** is a basic programming language that your browser understands. It powers most of the interactive web. **TypeScript** is a language built on top of JavaScript, to make the life of web developers easier;
+* **JavaScript** (JS): A programming language that your browser understands. It powers most of the interactive web;
 
-* **WebGL**: **WebGL** is a browser technology for being able to draw 3D graphics in your web browser. It has a very high performance, since it uses the same underlying tech as a lot of 3D games use. [It has been released in 2011](https://en.wikipedia.org/wiki/WebGL);
+* **TypeScript**: A language built on top of JavaScript, to make the life of web developers easier;
 
-* [**three.js**](https://threejs.org): **three.js** is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
+* **WebGL**: [**WebGL**](https://en.wikipedia.org/wiki/WebGL) is a browser technology for being able to draw 3D graphics in your web browser. It has a very high performance, since it uses the same underlying tech as a lot of 3D games use;
 
-* **Canvas2D**: **[Canvas2D](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D)**, next to WebGL, is a browser drawing technique for drawing flat, 2D graphics;
+* **three.js**: [**three.js**](https://threejs.org) is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
+
+* **Canvas2D**: [**Canvas2D**](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D), next to WebGL, is a browser drawing technique for drawing flat, 2D graphics;
 
 * **Array**: An **array** is nothing but a long, *long* list of numbers used in coding.
 
