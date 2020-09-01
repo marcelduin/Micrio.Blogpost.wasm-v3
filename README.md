@@ -30,11 +30,13 @@ From JS to C++
 5. **[The Rewrite: AssemblyScript](#5-the-rewrite-assemblyscript)**:
 The initial application of AssemblyScript WASM to Micrio 2.9
 
-	1. **[Going Atomic](#51-going-atomic)**:
+	1. **[AssemblyScript](#51-assemblyscript)**:
+	AssemblyScript basics
+	2. **[Going Atomic](#52-going-atomic)**:
 	Rewriting just a tiny part of JS
-	2. **[Bundling the compiled WASM inside the JS file](#52-bundling-the-compiled-wasm-inside-the-js-file)**:
+	3. **[Bundling the compiled WASM inside the JS file](#53-bundling-the-compiled-wasm-inside-the-js-file)**:
 	Keeping the resulting binary in the same JS file
-	3. **[The Realization](#53-the-realization)**:
+	4. **[The Realization](#54-the-realization)**:
 	Thinking about the next steps
 
 6. **[The Rewrite: AssemblyScript &amp; WebGL](#6-the-rewrite-assemblyscript-webgl)**:
@@ -161,7 +163,19 @@ Fast forward a few months, to just after the [WebAssembly Summit](https://webass
 
 During the WebAssembly conference, I was very impressed by a [synth demo](https://www.youtube.com/watch?v=C8j_ieOm4vE) written in **[AssemblyScript](https://www.assemblyscript.org/)**, a language created specifically for WebAssembly, using the TypeScript syntax. Basically you can write (near) TypeScript, which compiles to a `.wasm`-binary. And the great thing-- it's all installed using `npm`, so getting it up and running and compiling your program is super easy! Goodbye `Makefile`!
 
-## 5.1. Going atomic
+## 5.1. AssemblyScript
+
+**[AssemblyScript](https://www.assemblyscript.org/)** is a neat, typesafe way of writing compilable code. The syntax is very close to TypeScript, so anyone familiar with either TypeScript or JavaScript ES6 will not have a lot of difficulties learning the syntax.
+
+There are a few basic [`types` added in AssemblyScript](https://www.assemblyscript.org/types.html), which are required for compile-time optimizations:
+
+* `f64` / `f32` : For 64 or 32-bit floats;
+* `i8` / `i16` / `i32` / `i64` : For signed `int`s, ranging in precision
+* `u8` .. `u64` : For unsigned `int`s
+* [And a few more](https://www.assemblyscript.org/types.html)
+
+
+## 5.2. Going atomic
 
 This time, I wanted to see if it was possible to only let a small part of Micrio run inside WebAssembly, and still use most of the JavaScript that was already inside the client. *How small can we get it?* I decided to focus on a subset of camera functions, such as translating screen coordinates to image coordinates and vice versa. So this time no rendering, event handling, or writing shaders.
 
@@ -177,9 +191,11 @@ The compiled binary will then offer an `exports` object, containing the function
 
 **WebAssembly is running synchronously to JavaScript!**
 
-Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would require be `async`. Nope, the WASM-functions you call will have their return value available immediately! *This is, like, powerful stuff*!
+Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would require be `async`. Nope, the WASM-functions you call will have their return value available immediately!
 
-## 5.2. Bundling the compiled WASM inside the JS file
+*This is, like, powerful stuff*!
+
+## 5.3. Bundling the compiled WASM inside the JS file
 
 Since I now had some extra performing hands on deck for Micrio that was very easy to integrate, I decided to include this minimal WebAssembly binary in the then-stable release of Micrio (2.9). Though I didn't want an extra HTTP request for the WASM binary every time someone loaded the Micrio JS; so I included a `base64` encoded version of the WASM-file *inside* the Micrio JS, and for browsers that support it, auto-loaded that. As a fallback, I still had the original JS-only functions in place.
 
@@ -188,7 +204,7 @@ Since I now had some extra performing hands on deck for Micrio that was very eas
 This approach worked wonderfully. Zero weird bugs and errors, and (marginal) better performance. The Micrio 2.9-release has been running WASM for a while already!
 
 
-## 5.3. The Realization
+## 5.4. The Realization
 
 Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and THREEjs/WebGL for 360&deg; images) was still 100% JavaScript.
 
