@@ -8,15 +8,34 @@ WebAssembly (WASM) is the ability for your browser to run *compiled* code at (ne
 
 Micrio is [...]
 
+This article will be the epic tale of my discovery of WebAssembly, and the journey of migrating the 2.9 Micrio version written in plain JavaScript to WebAssembly as much as possible.
+
+
+
+## Terms used
+
+In this article, a lot of technical terms will be used. While I can't detail 100% of them, here is a summary of the most important ones:
+
+* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it *streams* a very large image to the viewer's browser by looking at which parts of the main image the user is looking at, and only downloading and showing those. One of those parts is called a **tile**;
+
+* **JavaScript** (JS): A programming language that your browser understands. It powers most of the interactive web;
+
+* **TypeScript**: A language built on top of JavaScript, to make the life of web developers easier;
+
+* **WebGL**: [**WebGL**](https://en.wikipedia.org/wiki/WebGL) is a browser technology for being able to draw 3D graphics in your web browser. It has a very high performance, since it uses the same underlying tech as a lot of 3D games use;
+
+* **three.js**: [**three.js**](https://threejs.org) is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
+
+* **Canvas2D**: [**Canvas2D**](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D), next to WebGL, is a browser drawing technique for drawing flat, 2D graphics;
+
+* **Array**: An **array** is nothing but a long, *long* list of numbers used in coding.
+
 
 
 # Table of Contents
 
 1. **[Introduction](#1-introduction)**:
 What is Micrio, what is this article about, setting constraints: client side app migrating from JS to AssemblyScript//WebAssembly.
-
-	1. **[Terms used](#11-terms-used)**:
-	Terms used throughout this article
 
 2. **[Current Situation](#2-the-current-situation)**:
 Micrio 2.9, short history, techstack, browser compatibility.
@@ -79,27 +98,6 @@ Compiling for the web, server microservices using WASM, freedom of choice of pro
 WebAssembly (WASM) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
 Basically, this means you can run compiled code written in a variety of programming languages (`C/C++`, `Rust`, `Go`, `AssemblyScript`, [..](https://github.com/appcypher/awesome-wasm-langs "and many many more")) in your browser, without any need for plugins. In its purest form, you will need some JavaScript to get it running and to communicate with the browser. For instance if you want to have a graphical output such as a game, you will need to link your program to work with available renderers, such as WebGL.
-
-This section will be the tale of my discovery of WebAssembly, and the journey to migrating the 2.9 Micrio version written in plain JavaScript to WebAssembly as much as possible.
-
-
-## 1.1. Terms used
-
-In this post, a lot of technical terms will be used. While I can't detail 100% of them, here is a list of the most important terms to understand:
-
-* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it *streams* a very large image to the viewer's browser by looking at which parts of the main image the user is looking at, and only downloading and showing those. One of those parts is called a **tile**;
-
-* **JavaScript** (JS): A programming language that your browser understands. It powers most of the interactive web;
-
-* **TypeScript**: A language built on top of JavaScript, to make the life of web developers easier;
-
-* **WebGL**: [**WebGL**](https://en.wikipedia.org/wiki/WebGL) is a browser technology for being able to draw 3D graphics in your web browser. It has a very high performance, since it uses the same underlying tech as a lot of 3D games use;
-
-* **three.js**: [**three.js**](https://threejs.org) is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
-
-* **Canvas2D**: [**Canvas2D**](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D), next to WebGL, is a browser drawing technique for drawing flat, 2D graphics;
-
-* **Array**: An **array** is nothing but a long, *long* list of numbers used in coding.
 
 
 # 2. The Current Situation
