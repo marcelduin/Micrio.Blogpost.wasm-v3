@@ -30,37 +30,37 @@ From JS to C++
 5. **[The Rewrite: AssemblyScript](#5-the-rewrite-assemblyscript)**:
 The initial application of AssemblyScript WASM to Micrio 2.9
 
-6. **[The Realization](#6-the-realization)**:
-The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
+	1. **[The Realization](#51-the-realization)**:
+	The *“But can it do more for Micrio?”* process -- how it took 4 weeks to come up with a masterplan
 
-7. **[The Rewrite: AssemblyScript &amp; WebGL](#7-the-rewrite-assemblyscript-webgl)**:
+6. **[The Rewrite: AssemblyScript &amp; WebGL](#6-the-rewrite-assemblyscript-webgl)**:
 4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
-	1. **[Directly connecting WebAssembly's Memory to WebGL](#71-connecting-webassemblys-memory-to-webgl)**:
+	1. **[Directly connecting WebAssembly's Memory to WebGL](#61-connecting-webassemblys-memory-to-webgl)**:
 	Taking JS out of the equasion
 
-	2. **[Doing the hard work](#72-doing-the-hard-work)**:
+	2. **[Doing the hard work](#62-doing-the-hard-work)**:
 	Back to square zero
 
-		1. **[Abstracting the tile logic](#721-abstracting-the-image-tile-logic)**
-		2. **[2D images](#722-2d-images)**
-		3. **[360&deg; images](#723-360-images)**
-		4. **[Rendering the required tiles](#724-rendering-the-required-tiles)**
+		1. **[Abstracting the tile logic](#621-abstracting-the-image-tile-logic)**
+		2. **[2D images](#622-2d-images)**
+		3. **[360&deg; images](#623-360-images)**
+		4. **[Rendering the required tiles](#624-rendering-the-required-tiles)**
 
 
-8. **The Benchmark**:
+7. **The Benchmark**:
 What and how to measure, what to improve
 
-9. **The Rewrite: Optimizing everything**:
+8. **The Rewrite: Optimizing everything**:
 Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
 
-10. **The Satisfaction**:
+9. **The Satisfaction**:
 Finishing touches and real world results
 
-11. **Conclusions**:
+10. **Conclusions**:
 The result: pros and cons. When (not) to use WASM, best practices, thoughts on the future.
 
-12. **Afterthoughts and the future**:
+11. **Afterthoughts and the future**:
 Compiling for the web, server microservices using WASM, freedom of choice of programming language, and how it will really change the landscape of technology, the fabric of our world, and might be the ultimate answer of life, the universe, and everything.
 
 
@@ -180,7 +180,7 @@ Since I now had some extra performing hands on deck for Micrio that was very eas
 This approach worked wonderfully. Zero weird bugs and errors, and (marginal) better performance. The Micrio 2.9-release has been running WASM for a while already!
 
 
-# 6. The Realization
+## 5.1. The Realization
 
 Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and THREEjs/WebGL for 360&deg; images) was still 100% JavaScript.
 
@@ -208,7 +208,7 @@ So kind of like the C++ emscripten implementation, but this time using the lean 
 
 
 
-# 7. The Rewrite: AssemblyScript + WebGL
+# 6. The Rewrite: AssemblyScript + WebGL
 
 _Third time's a charm._
 
@@ -219,7 +219,7 @@ This iteration, I used what I've learned in my previous two iterations:
 
 Back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and THREEjs implementations, not only (hopefully) improving performance, but being able to throw away *a lot* of JS code.
 
-## 7.1. Connecting WebAssembly's memory to WebGL
+## 6.1. Connecting WebAssembly's memory to WebGL
 
 WebAssembly runs within its own sandbox, using its own requested amount of memory. For instance, a WebAssembly program can request 16MB of memory to work with. This memory is assigned by the browser, and can be fully used by your WebAssembly program.
 
@@ -238,18 +238,18 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 
 
-## 7.2. Doing the hard work
+## 6.2. Doing the hard work
 
 Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using THREEjs/WebGL, and rewrite it in such a way that all that code is replaced in AssemblyScript.
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
-### 7.2.1. Abstracting the image tile logic
+### 6.2.1. Abstracting the image tile logic
 The input for AssemblyScript are only image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
 WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tiles should be united in a single vertex buffer having static positions, which WebGL will draw relative to a virtual camera's 3D Matrix.
 
-### 7.2.2. 2D images
+### 6.2.2. 2D images
 Now, the geometry for a 2D image is not that difficult. It is a flat plane inside the 3D space; all logic can be written as 2D coordinates, where `z` is always 0. A single tile is simply defined as a flat plane, with 6 vertex coordinates (your GPU thinks in *triangles*, so every rectangle consists of `2 * 3` vertex coordinates).
 
 ![A rectangle represented as triangles in GL](img/triangle.png)
@@ -257,7 +257,7 @@ Now, the geometry for a 2D image is not that difficult. It is a flat plane insid
 *Courtesy of [OpenGLBook.com](https://openglbook.com/chapter-2-vertices-and-shapes.html)*
 
 
-### 7.2.3. 360&deg; images
+### 6.2.3. 360&deg; images
 For the 360&deg; images, this proved to be a larger challenge. Where THREEjs has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge.
 
 I really, really wish I paid better attention in school then.
@@ -275,7 +275,7 @@ It all makes sense. But it took a long time before I got it right; not even ment
 In the end, both the 2D and 360&deg; images result in a single array buffer useable by WebGL, generated at runtime.
 
 
-### 7.2.4. Rendering the required tiles
+### 6.2.4. Rendering the required tiles
 
 This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All I need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
