@@ -96,16 +96,16 @@ Watch the entire WebAssembly Summit 2020 on YouTube here:
 
 # 4. The Rewrite: C++ and emscripten
 
-Prior to the WebAssembly Summit, and to get to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in `C` or `C++`, and compile it to a binary `.wasm`-file, that your browser can natively run. 
+Prior to the WebAssembly Summit, and to get to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in C or C++, and compile it to a binary `.wasm`-file, that your browser can natively run. 
 
-At this point, I still didn't really have a clear image of where WebAssembly starts and stops, and how autonomously it could run inside your browser, so I started a new project from scratch to see if I could make a `C++`-implementation of the basic Micrio logic: a virtual *zoomable* and *pannable* image consisting of a lot of separate tiles, using a virtual camera for displaying only the tiles necessary for what the user is viewing inside your screen.
+At this point, I still didn't really have a clear image of where WebAssembly starts and stops, and how autonomously it could run inside your browser, so I started a new project from scratch to see if I could make a C++-implementation of the basic Micrio logic: a virtual *zoomable* and *pannable* image consisting of a lot of separate tiles, using a virtual camera for displaying only the tiles necessary for what the user is viewing inside your screen.
 
 It turns out, emscripten already had great compatibility for [libsdl](https://www.libsdl.org/): a low-level audio, keyboard/mouse input, and OpenGL library. Which is awesome, because I could write my code using this very well documented library, even including mouse and key inputs and WebGL rendering. Since I was also working with downloading images, I also used the [stb_image.h](https://github.com/nothings/stb) image library.
 
 ![Setting up SDL and OpenGL](img/cpp.png "C++ in the 21st century")
 
 
-The largest struggle of this was picking up `C++` again, never having used it outside of hobby scope many years ago. But after a few days of cursing and second guessing myself, I had a working first version with all of the most important features written with help of the SDL library:
+The largest struggle of this was picking up C++ again, never having used it outside of hobby scope many years ago. But after a few days of cursing and second guessing myself, I had a working first version with all of the most important features written with help of the SDL library:
 
 * A virtual camera and all necessary viewing logic;
 * Image tiles downloading;
@@ -113,7 +113,9 @@ The largest struggle of this was picking up `C++` again, never having used it ou
 * Mouse event handling for panning and zooming the image;
 * Resize event handling to fit Micrio to the desired `<canvas>` HTML element
 
-You can see this version running here: https://b.micr.io/_test/wasm/index.html
+You can see this version running here: https://b.micr.io/_test/wasm/index.html :
+
+[![Micrio in native C++](img/emscripten.png)](https://b.micr.io/_test/wasm/index.html)
 
 
 ## 4.1. First Results
