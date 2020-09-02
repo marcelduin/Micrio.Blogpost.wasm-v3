@@ -421,21 +421,34 @@ The new client already *felt* a lot more smooth in my browser. Zooming, panning 
 
 This was also not a very big surprise, just looking at the difference in uncompiled code of both versions:
 
-* Micrio 2.9 had a total of **444KB** JavaScript code
-* Micrio 3.0 now had 315KB JavaScript and 56KB AssemblyScript, totalling **371KB** of code
+* Micrio 2.9 has a total of **444KB** JavaScript code
+* Micrio 3.0 now has 315KB JavaScript and 56KB AssemblyScript, totalling **371KB** of code
 
 That means that I had **73KB** less Micrio-code after the migration, for exactly the same behavior! Where did that all go!?
 
 Not to mention that for 360&deg; images, I could now do away with the three.js dependency, which was an extra **607KB** of JavaScript.
 
-Sometimes I still feel smug about that.
+*I still feel smug about that.*
 
 In the next chapter ([Going to production](#8-going-to-production)) I will write more about making the new library as compact as possible.
 
-First, I want to *prove* that the last few months were not spent in vain, and actually have some measurable results of the differences between Micrio 2.9 en 3.0.
+But first, I want to *prove* that the last few months were not spent in vain, and actually have some measurable results of the differences between Micrio 2.9 en 3.0.
 
 
 ## 7.1. Benchmark till you drop
+
+*Disclaimer*: Software testing and benchmarking is an art form to which there is no end of detail. Where a professional tester would take an actual Windows 3.1 PC to see how Micrio would perform on there, I have been a little more lazy in my approach.
+
+As I mostly wanted to test the *difference* between the performance of Micrio 2.9 and 3.0, I decided that a **single-device** (my medium-end Windows laptop), **single-browser** (Chrome) benchmark run would be sufficient.
+
+The Chrome devtools have great benchmarking tools, which I used. To be sure that there was as little background noise as possible, I ran all tests after a fresh reboot, making sure no unnecessary background processes, such as Windows Update, were running.
+
+The test itself was taking [this hi-res Micrio image](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder "The Fight Between Carnival and Lent by Pieter Bruegel the Elder"), removing all HTML-related rendering modules such as the markers, so we're left with just the image renderer, and running the **Benchmark** video tour, which is a 2-minute animated camera path through the image.
+
+** If you want to try it yourself, try the tour in both versions: [Micrio 3.0](https://micr.io/i/dzzLm/) vs [Micrio 2.9](https://micr.io/i/dzzLm/?v=2.9)** (open *Video Tours* from the menu en select *Benchmark*).
+
+
+
 
 ## 7.2. Quickest wins
 
