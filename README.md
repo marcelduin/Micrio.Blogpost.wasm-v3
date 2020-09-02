@@ -14,7 +14,7 @@ This article will be the epic tale of my discovery of WebAssembly, and the journ
 
 ## Terms used
 
-In this article, a lot of technical terms will be used. While I can't detail 100% of them, here is a summary of the most important ones:
+In this article, some technical terms will be used. While I can't detail 100% of them, here is a summary of the most important ones:
 
 * **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it *streams* a very large image to the viewer's browser by looking at which parts of the main image the user is looking at, and only downloading and showing those. One of those parts is called a **tile**;
 
@@ -201,13 +201,15 @@ The result: a 3KB binary containing some basic math functions, that take an inpu
 
 However, this is optional and I ended up using the JavaScript [WebAssembly API](https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API), *neat*. And it turns out, this is super easy: simply use the `fetch` API to load your compiled `.wasm`-file, cast it as an `ArrayBuffer`, and use the `WebAssembly.instantiate()` function to get it up and running.
 
-![Loading a wasm file](img/instantiate.png "This is awesome")
+![Loading a wasm file](img/instantiate.png "Gluing it yourself")
 
-The compiled binary will then offer an `exports` object, containing the functions that you have written in the AssemblyScript file, which you can immediately call from JavaScript as if they were normal functions. Which made me immediately realise something else:
+The compiled binary will then offer an `exports` object, containing the functions that you have written in the AssemblyScript file, which you can immediately call from JavaScript as if they were normal functions.
 
-**WebAssembly is running synchronously to JavaScript!**
+Wait.. "*which you can immediately call from JavaScript as if they were normal functions*"...
 
-Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would be `async`. Nope, the WASM-functions you call will have their return value available immediately!
+**WebAssembly is running synchronously to JavaScript!** :exploding_head:
+
+Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would be `async`. Nope, the WASM-functions you call will return immediately!
 
 [*This is, like, powerful stuff*!](https://www.assemblyscript.org/exports-and-imports.html#exports)
 
