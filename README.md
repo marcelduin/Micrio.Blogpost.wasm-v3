@@ -65,13 +65,17 @@ The initial application of AssemblyScript WASM to Micrio 2.9
 	1. **[Directly connecting WebAssembly's Memory to WebGL](#61-connecting-webassemblys-memory-to-webgl)**:
 	Taking JS out of the equasion
 
-	2. **[Doing the hard work](#62-doing-the-hard-work)**:
+	2. **[Moving the image tile logic to AssemblyScript](#62-moving-the-image-tile-logic-to-assemblyscript)**:
 	Back to square zero
 
-		1. **[Abstracting the tile logic](#621-abstracting-the-image-tile-logic)**
-		2. **[2D images](#622-2d-images)**
-		3. **[360&deg; images](#623-360-images)**
-		4. **[Rendering the required tiles](#624-rendering-the-required-tiles)**
+		1. **[2D images](#621-2d-images)**
+		2. **[360&deg; images](#622-360-images)**
+
+	3. **[Connecting it to JavaScript](#63-connecting-it-to-javascript)**:
+	Replacing the twin engine by our new monster
+
+	4. **[Rendering the lot](#64-rendering-the-lot)**:
+	Connecting everything and making it work again
 
 
 7. **The Benchmark**:
@@ -256,7 +260,7 @@ So kind of like the C++ emscripten implementation, but this time using the lean 
 
 # 6. Third Rewrite: AssemblyScript + WebGL
 
-_Third time's a charm._
+*Third time's a charm.*
 
 This iteration, I used what I've learned in my previous two iterations:
 
@@ -284,28 +288,33 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 
 
-## 6.2. Doing the hard work
+### 6.2. Moving the image tile logic to AssemblyScript
 
-Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL, and rewrite it in AssemblyScript.
+*Doing the hard work*
+
+Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL (let's call this the *twin engine*), and rewrite it in AssemblyScript.
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
-![A schema I found googling "WebGL pipeline"](img/pipeline.svg)*The German WebGL rendering pipeline, you're welcome*
+![A schema I found googling "WebGL pipeline"](img/pipeline.svg)*The German WebGL rendering pipeline, you're welcome ([wiki](https://commons.wikimedia.org/wiki/File:Graphics_pipeline_de.svg))*
 
-### 6.2.1. Abstracting the image tile logic
-The input for AssemblyScript are only the Micrio image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
+The input for AssemblyScript are only the Micrio image parameters: a unique ID, the image width and height. The output must be WebGL-ready *vertex* and *texture coordinate* array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
-WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tiles should be united in a single vertex buffer having static positions, which WebGL will draw relative to a virtual camera's 3D Matrix.
+WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tile coordinates should be stored in a single vertex array buffer having static positions, which WebGL will draw relative to the virtual camera's 3D Matrix and the user's browser viewport.
 
-### 6.2.2. 2D images
-Now, the geometry for a 2D image is not that difficult. It is a flat plane inside the 3D space; all logic can be written as 2D coordinates, where `z` is always 0. A single tile is simply defined as a flat plane, with 6 vertex coordinates (your GPU thinks in *triangles*, so every rectangle consists of `2 * 3` vertex coordinates).
+It's our job now to create those array buffers from scratch. Since Micrio supports both 2D and 360&deg; images, and their technique is quite different, I had to create different array creation methods for both separately.
+
+### 6.2.1. 2D images
+The geometry of a 2D image is not that difficult. The image itself is a flat plane inside the 3D space, subdivided by all the tiles, one set per zoom level. All coordinates can be written as 2D coordinates, where `z` is always 0.
+
+A single tile is simply defined as a flat 2D plane, with 6 vertex coordinates to specify the rectangle (your GPU thinks in *triangles*, so every rectangle consists of `2 * 3` vertex coordinates).
 
 ![A rectangle represented as triangles in GL](img/triangle.png "How a rectangle is built up in WebGL/OpenGL")
 
 *Courtesy of [OpenGLBook.com](https://openglbook.com/chapter-2-vertices-and-shapes.html)*
 
 
-### 6.2.3. 360&deg; images
+### 6.2.2. 360&deg; images
 For the 360&deg; images, this proved to be a larger challenge. Where three.js has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge to manually do all the work that three.js had been doing for me before.
 
 I really, really wish I paid better attention in school then.
@@ -325,21 +334,37 @@ It all makes sense. But it took a long time before I got it right; not even ment
 In the end, both the 2D and 360&deg; images result in a single array buffer useable by WebGL, generated at runtime.
 
 
-### 6.2.4. Rendering the required tiles
+## 6.3. Connecting it to JavaScript
+
+*`rm -rf js/camera`*
+
+Since I was replacing modules inside the Micrio JavaScript client instead of working from scratch, I had to first remove all old JS-based rendering code (the *twin engine*), and then make the *glue* discussed earlier, linking the WebAssembly program as transparently as possible to the existing internal Micrio JS APIs.
+
+Not only was this a fun thing to do, it was also a great sanity check of the entire Micrio JS architecture; there was too much rendering logic in modules where it wasn't supposed to be!
+
+After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR WASM` comments, it was time to use the newly created `Micrio.WASM` module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
+
+This module takes care of loading the WASM binary, setting up the memory buffer, acting as the hub between JS modules and WASM, sending all required user inputs (mouse, key, touch) to WebAssembly, and is in control of the main rendering loop.
+
+Bit by bit, over the course of a few weeks, this engine was made as a perfect fit to work together with the rest of the JS client, saving some hardly used and exotic implementations (but still used by 1% of the Micrio projects) for last.
+
+
+## 6.4. Rendering the lot
 
 This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All you need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
 The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, of which I will spare you the details here.
 
-So now we are at the point where everything is in place to draw a frame in Micrio. AssemblyScript needs to know:
+So now we are at the point where everything is in place to draw a frame in Micrio. To do this, AssemblyScript needs to know:
 
-* The dimensions of your browser window
-* How the virtual camera is positioned and zoomed in
+* The dimensions of your browser window, which it gets from JavaScript
+* How the virtual camera is positioned and zoomed in, based on all prior user input received from JS
 
-And then returns an array of `start` and `length` indices to WebGL, to draw the tiles:
+And then returns a bunch of `start` and `length` indices to WebGL, to draw the tiles:
 
 ![The WebGL tile drawing function](img/drawtile.png "The literal tile drawing function")
 
 This JavaScript function, the actual WebGL rendering function, is called from *inside* AssemblyScript. Yes, [it is totally possible to call JavaScript-functions from inside your running WebAssembly functions](https://www.assemblyscript.org/exports-and-imports.html#imports)!
 
 This makes JavaScript a mere **puppet** of WebAssembly. Which is friggin' awesome.
+
