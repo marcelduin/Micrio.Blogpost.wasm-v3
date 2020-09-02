@@ -463,28 +463,29 @@ All tests were run with the browser in fullscreen mode, on a 1440p screen (2560 
 Before we go to the results, these are some general things I've learned in the bencharking and subsequent optimization process.
 
 
-**Tip 1: don't do bulk changes between benchmarks**
-
-Sometimes the mental result of a benchmark for me would be to change several small things at once, and then run the benchmark again.
-
-After *a lot* of trial runs, I found out that this was not a smart thing to do. Some subtle settings (like turning alpha transparency on or off for WebGL) might be a single `true` to `false` setting, but could a have major performance impact. And without testing that setting individually, *you just don't know that*. It might feel too menial, but it's really worth it.
-
-
-**Tip 2: if you can, make the benchmark as quick and meaningful as possible**
+**Tip 1: if you can, make the benchmark as quick and meaningful as possible**
 
 Since I was using my work laptop for benchmarking, and I made the benchmark test tour *2 whole minutes long*, which is just too short to leave it running and come back later and feels too long to wait out, especially since I wasn't multitasking during the benchmarks, I *really* wished I made the benchmark at least 50% shorter. But since I already had a lot of results when I realised this, I didn't want to blemish them by changing the tour halfway, or by redoing them all.
 
 So I stuck with the 2:00 tour. I can still dream every frame.
 
 
-**Tip 3: use a private browser window without any extensions for benchmarking**
+**Tip 2: use a private browser window without any extensions for benchmarking**
 
 Also doing some benchmarking on another browser running Chromium (Brave), I realised some numbers were *way* off from Chrome's results. After research, this had to do with some Chrome extensions running, and definitely influencing the performance.
 
 
-**Tip 4: for your sanity's sake, do a baseline test every once in a while**
+**Tip 3: for your sanity's sake, do a baseline test every once in a while**
 
 To be sure, and because you never know the state of the testing machine, every few tests I would do a baseline test to see if the results were still the same as before. In this way, I made sure that there were no external factors tainting the test scores. Because results will never be 100% the same, you need to know those margins to know when any change you make is significant.
+
+
+**Tip 4: don't do bulk changes between benchmarks**
+
+Sometimes the mental result of a benchmark for me would be to change several small things at once, and then run the benchmark again.
+
+After *a lot* of trial runs, I found out that this was not a smart thing to do. Some subtle settings (like turning alpha transparency on or off for WebGL) might be a single `true` to `false` setting, but could a have major performance impact. And without testing that setting individually, *you just don't know that*. It might feel too menial, but it's really worth it.
+
 
 
 ## 7.3. First results and subsequent runs
@@ -515,19 +516,57 @@ Above that, all frameskips were gone, and there was less memory used. These resu
 This proved to me that the whole operation was worth it. I was extatic and tired of the early mornings and nights that the optimizing took me.
 
 
+
 ## 7.4. Quickest wins
 
 So, what did I really change in those optimizations? And more interestingly: *could I do the same optimizations to 2.9 and get the same results*?
 
-Well, for sure up to a certain level. For instance, the entire tile image download logic was also rewritten, where code from 2016 was replaced with code from 2020. I think that might have a positive impact on 2.9. However, most optimizations really had a lot to do with tweaking the WebGL rendering pipeline, the frame drawing logic (which was drastically different in 3.0), and more small things.
+Well, for sure up to a certain level. For instance, the entire tile image download logic was also rewritten, where code from 2016 was replaced with code from 2020. I think that might also have a positive impact on 2.9. However, most optimizations really had a lot to do with tweaking the WebGL rendering pipeline, the frame drawing logic (which was drastically different in 3.0), and more small things.
 
+Plus, the entire code architecture had just changed. Where before, it might not be easy to make a single change that would impact both the 2D and 360&deg; rendering pipeline, now all rendering used a single pipeline, making optimizing it so much easier and nice to do.
 
+Perhaps the most important thing I did to optimize things, is examine the benchmarking test results: *which step is taking too much time, and how can we minimize that?*, and backtracking until it worked better. Turning off individual functions until it barely worked, until the performance was acceptable. Finding the next thing to optimize, and repeat it *ad nauseam*. Keep measuring every step so you gain a better understanding of what's *actually* happening inside your browser.
+
+This is by far the best way to optimize code. However, the next part details some other things that *I thought* would improve performance, but in fact didn't.
 
 
 
 ## 7.5. Wrong assumptions
 
+*I know what's good for my computer!*
 
+Okay. The Micrio blooper reel. What did I do horribly wrong, and why did I do that?
+
+### Don't use `WebWorkers` for simple download tasks
+A lot of Micrio involves downloading *a lot* of individual tile-textures when the user is panning and zooming the large images. [WebWorkers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) are asynchronously running separate CPU thread you can call from your main JS thread, which you can give a task to do on its own.
+
+I thought it would be a good idea to offload the texture loading to 3 separate WebWorkers. On paper this is a good idea-- the downloading and casting to `ImageBitmap` can be done in the WebWorker, and when it's done, it just passes the bitmap back to the main JS thread, so it can be linked as a WebGL texture.
+
+After using this for a while, I found out that this was actually a large performance stopper. I haven't fully dived into it, but I do know this:
+
+**I assumed I knew what was good for the browser**
+
+What I forgot is that the browser engine is *heavily* optimized by itself, and by using the WebWorkers, I solved a problem before it became a problem. The browser on itself is optimized enough to simply download all the images in the main JS thread.
+
+
+### Don't use `requestIdleCallback` for semi-crucial things
+On paper, [`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) is a great function: like `requestAnimationFrame` firing *the next available drawable frame* that's good with your browser, `requestIdleCallback` fires when *your browser isn't doing anything*. Meaning, you can do background cleanup functions, or functions that would otherwise block the current rendering thread.
+
+First, I used it to cast downloaded textures to WebGL textures; usually, this takes a *little* CPU time, so I wanted to do that when nothing else was going on at the moment, to prevent blocking any rendering.
+
+Turns out, on mobile phones, while you are using touch events, **no single** `requestIdleCallback` function will be fired. So when I was pinching on a touch device, the Micrio image would not get sharper: the image was downloaded, but was not cast to a WebGL texture until *after I stopped pinching*.
+
+That was a nice one to find out, since otherwise it seemed to be working quite well.
+
+
+### Concluding
+
+> *Don't think too much!*
+     *-- my old German teacher*
+
+Your browser is already the result of 25+ years of the biggest minds working together. It's now 2020, and you can place a lot more trust into its inner workings than you could, say, *when Internet Explorer was still a thing*.
+
+Only fix problems that are real problems; don't waste your time by making pre-assumptions that will fix a non-problem.
 
 
 
