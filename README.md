@@ -337,7 +337,7 @@ Now the basic setup was known, this is where it became more difficult. I had to 
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
-![A schema I found googling "WebGL pipeline"](img/pipeline.svg)*The German WebGL rendering pipeline, you're welcome ([wiki](https://commons.wikimedia.org/wiki/File:Graphics_pipeline_de.svg))*
+![A schema I found googling "WebGL pipeline"](img/pipeline.svg)*The German WebGL rendering pipeline -- you're welcome! ([wiki](https://commons.wikimedia.org/wiki/File:Graphics_pipeline_de.svg))*
 
 The input for AssemblyScript are only the Micrio image parameters: a unique ID, the image width and height. The output must be WebGL-ready *vertex* and *texture coordinate* array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
@@ -499,21 +499,7 @@ After the first few trial runs, while the test *looked* much smoother on my scre
 
 There seemed to be overall less scripting, but *way* more rendering and painting going on. Also, the red dots in the timeline at the top indicate blocked frames, or frame skips. There were actually *more* than before now.
 
-This result yielded a week's worth of code optimizations, tweaking, and small rewrites. In the next section I will summarize a few do's and don'ts, but after a while, the results were quite different:
-
-
-![Last benchmarks were overwhelming](img/bench-2.png "Time for celebration!")
-
-
-Or for a better comparison:
-
-![64% less CPU used in 3.0](img/bench-results.png "Numbers don't lie")
-
-**64% less CPU used than in 2.9!**
-
-Above that, all frameskips were gone, and there was less memory used. These results were also the same over multiple runs.
-
-This proved to me that the whole operation was worth it. I was extatic and tired of the early mornings and nights that the optimizing took me.
+After a long sigh, this result yielded a week's worth of code optimizations, tweaking, and small rewrites, to see if I could get more out of it than this.
 
 
 
@@ -565,16 +551,57 @@ Turns out, on mobile phones, while you are using touch events, **no single** `re
 That was a nice one to find out, since otherwise it seemed to be working quite well.
 
 
-### Concluding
+### Take best practises seriously
+*Note*: Until writing this article I thought this was common knowledge, but I couldn't find any source to back me up. It *is* a best practice however!
 
-```
-"Don't think too much!"
-    - my old German teacher
-```
+In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early has possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than 16ms, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
+
+This is what caused earlier Micrio versions a lot of janks and frameskips; the steps in the render functions were:
+
+1. Draw everything and update all positions;
+2. Check if I need to request another frame (based on whether all required tiles are loaded, or there is a camera animation running);
+3. If a new frame is required, request that one and `GOTO 1`.
+
+This makes total sense-- you don't want to have an ever-running animation loop when there's no updates to draw. But also, you don't want to do the actual drawing on your screen *before* requesting your next frame.
+
+So in WebAssembly, I made a `.shouldRequest()` function, which firstly did the pre-work required for the rendering, returning a `true` or `false` for whether JavaScript should ask for a next frame or not.
+
+After *that*, all the real drawing logic was done.
+
+This fix didn't change CPU usage a lot, but it *did* remove almost all of the skipped frames.
+
+
+### General point
+
+> "Don't think too much!"
+
+-- my old German teacher
 
 Your browser is already the result of 25+ years of the biggest minds working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, *when Internet Explorer was still a thing*.
 
-Only fix problems that are real problems; don't waste your time by making assumptions that will fix a non-problem.
+Some of my performance problems were due to my overthinking, and the resulting *overengineering*.
+
+**Tip 5: Only fix problems that are real problems; don't waste your time by making assumptions that will fix a non-problem.**
+
+
+## 7.6. The final test results are in
+
+After the optimizations, of which none could be singled out to be *the thing that fixed it all*, the numbers were looking quite differently:
+
+
+![Last benchmarks were overwhelming](img/bench-2.png "Time for celebration!")
+
+Or for a better comparison:
+
+![64% less CPU used in 3.0](img/bench-results.png "Numbers don't lie")
+
+**64% less CPU used than in 2.9!**
+
+Above that, all frameskips were gone, and there was less memory used. These results were also the same over multiple runs.
+
+This proved to me that the whole operation was worth it. I was extatic and tired of the early mornings and nights that the optimizing took me.
+
+
 
 
 
