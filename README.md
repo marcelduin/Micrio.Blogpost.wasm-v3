@@ -81,12 +81,18 @@ The initial application of AssemblyScript WASM to Micrio 2.9
 First results, what and how to measure, what to improve
 
 	1. [**Benchmark till you drop**](#71-benchmark-till-you-drop):
+	The setup
+
+	1. [**The testing process**](#72-the-testing-process):
 	Being precise is important
 
-	2. [**Quickest wins**](#72-quickest-wins):
+	3. [**First results and subsequent runs**](#73-first-results-and-subsequent-runs):
+	From Meh to Whee
+
+	4. [**Quickest wins**](#74-quickest-wins):
 	Takeaways if you're doing the same as me
 
-	3. [**Wrong assumptions**](#73-wrong-assumptions):
+	5. [**Wrong assumptions**](#75-wrong-assumptions):
 	The blooper reel, but also wise lessons
 
 
@@ -452,7 +458,36 @@ All tests were run with the browser in fullscreen mode, on a 1440p screen (2560 
 **If you want to try it yourself, try the tour in both versions: [Micrio 3.0](https://micr.io/i/dzzLm/) vs [Micrio 2.9](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder?v=2.9)** (open *Video Tours* from the menu and select *Benchmark*).
 
 
-## 7.2. First results and subsequent runs
+## 7.2. The testing progress
+
+Before we go to the results, these are some general things I've learned in the bencharking and subsequent optimization process.
+
+
+**Tip 1: don't do bulk changes between benchmarks**
+
+Sometimes the mental result of a benchmark for me would be to change several small things at once, and then run the benchmark again.
+
+After *a lot* of trial runs, I found out that this was not a smart thing to do. Some subtle settings (like turning alpha transparency on or off for WebGL) might be a single `true` to `false` setting, but could a have major performance impact. And without testing that setting individually, *you just don't know that*. It might feel too menial, but it's really worth it.
+
+
+**Tip 2: if you can, make the benchmark as quick and meaningful as possible**
+
+Since I was using my work laptop for benchmarking, and I made the benchmark test tour *2 whole minutes long*, which is just too short to leave it running and come back later and feels too long to wait out, especially since I wasn't multitasking during the benchmarks, I *really* wished I made the benchmark at least 50% shorter. But since I already had a lot of results when I realised this, I didn't want to blemish them by changing the tour halfway, or by redoing them all.
+
+So I stuck with the 2:00 tour. I can still dream every frame.
+
+
+**Tip 3: use a private browser window without any extensions for benchmarking**
+
+Also doing some benchmarking on another browser running Chromium (Brave), I realised some numbers were *way* off from Chrome's results. After research, this had to do with some Chrome extensions running, and definitely influencing the performance.
+
+
+**Tip 4: for your sanity's sake, do a baseline test every once in a while**
+
+To be sure, and because you never know the state of the testing machine, every few tests I would do a baseline test to see if the results were still the same as before. In this way, I made sure that there were no external factors tainting the test scores. Because results will never be 100% the same, you need to know those margins to know when any change you make is significant.
+
+
+## 7.3. First results and subsequent runs
 
 First of all, the benchmarks were *not only* testing the JavaScript vs WebAssembly performance. A lot more had changed under the hood, for instance going from Canvas2D rendering to WebGL. These tests are by no means good comparisons for barebone JS versus WASM, but rather performance of Micrio as a whole.
 
@@ -480,9 +515,17 @@ Above that, all frameskips were gone, and there was less memory used. These resu
 This proved to me that the whole operation was worth it. I was extatic and tired of the early mornings and nights that the optimizing took me.
 
 
-## 7.3. Quickest wins
+## 7.4. Quickest wins
 
-## 7.4. Wrong assumptions
+So, what did I really change in those optimizations? And more interestingly: *could I do the same optimizations to 2.9 and get the same results*?
+
+Well, for sure up to a certain level. For instance, the entire tile image download logic was also rewritten, where code from 2016 was replaced with code from 2020. I think that might have a positive impact on 2.9. However, most optimizations really had a lot to do with tweaking the WebGL rendering pipeline, the frame drawing logic (which was drastically different in 3.0), and more small things.
+
+
+
+
+
+## 7.5. Wrong assumptions
 
 
 
