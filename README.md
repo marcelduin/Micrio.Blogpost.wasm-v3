@@ -554,7 +554,7 @@ That was a nice one to find out, since otherwise it seemed to be working quite w
 ### Take best practises seriously
 *Note*: Until writing this article I thought this was common knowledge, but I couldn't find any source to back me up. It *is* a best practice however!
 
-In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early has possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than 16ms, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
+In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early has possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than than a few milliseconds, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
 
 This is what caused earlier Micrio versions a lot of janks and frameskips; the steps in the render functions were:
 
