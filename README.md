@@ -288,7 +288,7 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 
 
-### 6.2. Moving the image tile logic to AssemblyScript
+## 6.2. Moving the image tile logic to AssemblyScript
 
 *Doing the hard work*
 
@@ -344,7 +344,13 @@ Not only was this a fun thing to do, it was also a great sanity check of the ent
 
 After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR WASM` comments, it was time to use the newly created `Micrio.WASM` module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
 
-This module takes care of loading the WASM binary, setting up the memory buffer, acting as the hub between JS modules and WASM, sending all required user inputs (mouse, key, touch) to WebAssembly, and is in control of the main rendering loop.
+This module acts as a 2-way street between JS and WASM and takes care of a few things:
+
+* Loading the WASM binary and setting up the shared memory buffer;
+* Acting as a transparent hub between JS modules and WASM;
+* Sending all required user events (mouse, key, touch) to WASM;
+* Downloads the requested tile images and links them to WebGL as textures;
+* It's in control of the main rendering loop for both WASM and JS (HTML elements like markers).
 
 Bit by bit, over the course of a few weeks, this engine was made as a perfect fit to work together with the rest of the JS client, saving some hardly used and exotic implementations (but still used by 1% of the Micrio projects) for last.
 
