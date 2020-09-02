@@ -466,7 +466,7 @@ There seemed to be overall less scripting, but *way* more rendering and painting
 This result yielded a week's worth of code optimizations, tweaking, and small rewrites. In the next section I will summarize a few do's and don'ts, but after a while, the results were quite different:
 
 
-![Last benchmarks were overwhelming](img/bench-1.png)
+![Last benchmarks were overwhelming](img/bench-2.png)
 *Time for celebration*
 
 Or for a better comparison:
