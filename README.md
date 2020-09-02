@@ -86,7 +86,7 @@ First results, what and how to measure, what to improve
 	2. [**Quickest wins**](#72-quickest-wins):
 	Takeaways if you're doing the same as me
 
-	3. [**Wrong assumptions](#73-wrong-assumptions):
+	3. [**Wrong assumptions**](#73-wrong-assumptions):
 	The blooper reel, but also wise lessons
 
 
@@ -105,7 +105,7 @@ Compiling for the web, server microservices using WASM, freedom of choice of pro
 
 Hi! I'm Marcel and I'm the creator of the [Micrio storytelling platform](https://micr.io) -- basically a high performance ultra high resolution image viewer, for both 2D and 360&deg; images, with added markers, tours, audio, etc.
 
-As a hardcore vanilla JS dev, I started the Micrio JS client development back in 2015, pushing to find the best balance between hardware performance (60fps all the way), minimal CPU and bandwidth use (for older and mobile devices), and still have a sharp and high quality viewing experience.
+As a hardcore vanilla JS dev, I started the Micrio JS client development back in 2015, pushing to find the best balance between hardware performance (60fps all the way), minimal CPU and bandwidth use (for older and mobile devices), and still deliver a sharp and high quality viewing experience.
 
 WebAssembly (WASM) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
@@ -123,7 +123,7 @@ For Micrio, it is **vital** that the performance on the client's browser is as g
 
 Because Micrio is being used for an [ever growing list](https://micr.io/showases) of awesome projects, the most important thing is to make sure that for whoever visits a Micrio project, **it must work, and work well**.
 
-So also, keeping compatibility is hugely important: the library as a single JS file works on all modern browsers, way back to even Internet Explorer 10, and 11 for 360&deg; images.
+So also keeping compatibility is hugely important: I don't want to show the user a "**your browser is too old for this**" warning, while still keeping up with the latest tech. This balance is hard to find and having to keep compatibility with older tech is sometimes frustrating. Nonetheless, the library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
 
 The current tech stack of (the compiled) [version 2.9](https://b.micr.io/micrio-2.9.min.js):
 
@@ -134,9 +134,11 @@ The current tech stack of (the compiled) [version 2.9](https://b.micr.io/micrio-
 * Using [ShadowRoot](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot) + polyfills
 * Using [CustomElements](https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements) + polyfills for the `<micr-io>` tag
 
-As you can imagine, displaying a [70.000 x 22.000 pixel](https://micr.io/i/gKuBD/sharpest-ever-view-of-the-andromeda-galaxy) in your browser in a matter of milliseconds, allowing the user to freely zoom in and navigate, requires a little bit of processing power.
+As you can imagine, displaying a [25.500 x 25.500 pixel](https://micr.io/i/ZDQxY/hubble-legacy-field-stsci-h-p1917a-f) in your browser in a matter of milliseconds, allowing the user to freely zoom in and navigate, requires a little bit of processing power.
 
 Now, Micrio 2.9 *isn't bad*. It runs pretty smooth on all devices. But with WebAssembly around the corner, this could make a *big* difference in making Micrio's performance even better, and could improve the code architecture a lot.
+
+And, perhaps, this could also mark the setup for a new major version, where I will draw a clear line and drop all compatibility fixes and polyfills for older browsers: **Micrio 3.0**.
 
 
 
