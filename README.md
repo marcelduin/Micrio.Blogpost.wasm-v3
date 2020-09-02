@@ -12,7 +12,7 @@ This article will be the epic tale of my discovery of WebAssembly, and the journ
 
 
 
-## Terms used
+# Terms used
 
 In this article, some technical terms will be used. While I can't detail 100% of them, here is a summary of the most important ones:
 
@@ -43,13 +43,13 @@ Micrio 2.9, short history, current tech stack, browser compatibility
 3. **[The Discovery](#3-the-discovery)**:
 From asm.js in 2013 to WebAssembly in 2020
 
-4. **[The Rewrite: C++ and emscripten](#4-the-rewrite-c-and-emscripten)**:
+4. **[First Rewrite: C++ and emscripten](#4-first-rewrite-c-and-emscripten)**:
 From JS to C++
 
 	1. **[First Results](#41-first-results)**:
 	How C++ was not the perfect choice
 
-5. **[The Rewrite: AssemblyScript](#5-the-rewrite-assemblyscript)**:
+5. **[Second Rewrite: AssemblyScript](#5-second-rewrite-assemblyscript)**:
 The initial application of AssemblyScript WASM to Micrio 2.9
 
 	1. **[Going Atomic](#51-going-atomic)**:
@@ -59,7 +59,7 @@ The initial application of AssemblyScript WASM to Micrio 2.9
 	3. **[The Realization](#53-the-realization)**:
 	Thinking about the next steps
 
-6. **[The Rewrite: AssemblyScript &amp; WebGL](#6-the-rewrite-assemblyscript-webgl)**:
+6. **[Third Rewrite: AssemblyScript &amp; WebGL](#6-third-rewrite-assemblyscript-webgl)**:
 4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
 	1. **[Directly connecting WebAssembly's Memory to WebGL](#61-connecting-webassemblys-memory-to-webgl)**:
@@ -123,7 +123,7 @@ Watch the entire WebAssembly Summit 2020 on YouTube here:
 
 
 
-# 4. The Rewrite: C++ and emscripten
+# 4. First Rewrite: C++ and emscripten
 
 Prior to the WebAssembly Summit, and to get to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in C or C++, and compile it to a binary `.wasm`-file, that your browser can natively run. 
 
@@ -175,7 +175,7 @@ However, it's extremely neat that there is a C++ port of Micrio that would run n
 
 
 
-# 5. The Rewrite: AssemblyScript
+# 5. Second Rewrite: AssemblyScript
 
 Fast forward a few months, to just after the [WebAssembly Summit](https://webassembly-summit.org/) in Mountain View in February 2020. With a bundle of fresh energy and inspiration, I decided to see if I could use WebAssembly to improve the Micrio JavaScript client a second time.
 
@@ -254,7 +254,7 @@ So kind of like the C++ emscripten implementation, but this time using the lean 
 
 
 
-# 6. The Rewrite: AssemblyScript + WebGL
+# 6. Third Rewrite: AssemblyScript + WebGL
 
 _Third time's a charm._
 
@@ -290,8 +290,10 @@ Now the basic setup was known, this is where it became more difficult. I had to 
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
+![A schema I found googling "WebGL pipeline"](img/digitaltechnik.jpg)*(I also don't get why I found this googling for "WebGL pipeline")*
+
 ### 6.2.1. Abstracting the image tile logic
-The input for AssemblyScript are only image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
+The input for AssemblyScript are only the Micrio image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
 WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tiles should be united in a single vertex buffer having static positions, which WebGL will draw relative to a virtual camera's 3D Matrix.
 
@@ -329,7 +331,12 @@ This is what's so cool about WebGL: you can tell it to render certain *parts* of
 
 The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, of which I will spare you the details here.
 
-All I need to know in AssemblyScript are the dimensions of your browser window, and how the virtual camera is positioned and zoomed in, to return an array of `start` and `length` indices to WebGL, to draw the tiles:
+So now we are at the point where everything is in place to draw a frame in Micrio. AssemblyScript needs to know:
+
+* The dimensions of your browser window
+* How the virtual camera is positioned and zoomed in
+
+And then returns an array of `start` and `length` indices to WebGL, to draw the tiles:
 
 ![The WebGL tile drawing function](img/drawtile.png "The literal tile drawing function")
 
