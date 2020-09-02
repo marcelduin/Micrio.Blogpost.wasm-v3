@@ -273,7 +273,6 @@ As the developer, you are **100%** in control of this memory. Micrio is an excel
 
 
 ![180 bytes of memory for a single 2D tile](img/singletile.png "A single 2D tile takes 180 bytes of memory")
-*A single 2D tile takes 180 bytes of memory*
 
 
 The cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object. So if WebAssembly can create an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and UV/normal buffers!
