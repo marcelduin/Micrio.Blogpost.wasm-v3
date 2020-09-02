@@ -99,10 +99,10 @@ First results, what and how to measure, what to improve
 8. [**Going to production**](#8-going-to-production):
 Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
 
-9. **Conclusions**:
+9. [**Conclusions**](#9-conclusions):
 The result: pros and cons. When (not) to use WASM, best practices, thoughts on the future.
 
-10. **Afterthoughts and the future**:
+10. [**Afterthoughts and the future**](#10-afterthoughts-and-the-future-of-webassembly):
 Compiling for the web, server microservices using WASM, freedom of choice of programming language, and how it will really change the landscape of technology, the fabric of our world, and might be the ultimate answer of life, the universe, and everything.
 
 
@@ -494,7 +494,7 @@ First of all, the benchmarks were *not only* testing the JavaScript vs WebAssemb
 
 After the first few trial runs, while the test *looked* much smoother on my screen using Micrio 3.0, the measured results were not that impressive. Over the 2 minute measured timespan, there was only *14% less* CPU usage than with 2.9, tested over a number of trials.
 
-![First benchmarks were underwhelming](img/bench-1.png)
+![First benchmarks were underwhelming](img/bench-1.png "Meh.")
 *Meh.*
 
 There seemed to be overall less scripting, but *way* more rendering and painting going on. Also, the red dots in the timeline at the top indicate blocked frames, or frame skips. There were actually *more* than before now.
@@ -502,12 +502,12 @@ There seemed to be overall less scripting, but *way* more rendering and painting
 This result yielded a week's worth of code optimizations, tweaking, and small rewrites. In the next section I will summarize a few do's and don'ts, but after a while, the results were quite different:
 
 
-![Last benchmarks were overwhelming](img/bench-2.png)
-*Time for celebration*
+![Last benchmarks were overwhelming](img/bench-2.png "Time for celebration!")
+
 
 Or for a better comparison:
 
-![64% less CPU used in 3.0](img/bench-results.png)
+![64% less CPU used in 3.0](img/bench-results.png "Numbers don't lie")
 
 **64% less CPU used than in 2.9!**
 
@@ -525,7 +525,13 @@ Well, for sure up to a certain level. For instance, the entire tile image downlo
 
 Plus, the entire code architecture had just changed. Where before, it might not be easy to make a single change that would impact both the 2D and 360&deg; rendering pipeline, now all rendering used a single pipeline, making optimizing it so much easier and nice to do.
 
-Perhaps the most important thing I did to optimize things, is examine the benchmarking test results: *which step is taking too much time, and how can we minimize that?*, and backtracking until it worked better. Turning off individual functions until it barely worked, until the performance was acceptable. Finding the next thing to optimize, and repeat it *ad nauseam*. Keep measuring every step so you gain a better understanding of what's *actually* happening inside your browser.
+Perhaps the most important thing I did to optimize things, was to examine the benchmarking test results: 
+
+1. *Which step is taking too much time, and how can we minimize that?*
+2. Backtracking your code until it worked better: turning off individual functions until it barely works, until the performance is acceptable;
+3. Finding the next thing to optimize, and `GOTO 1` *ad nauseam*.
+
+Keep measuring every step so you gain a better understanding of what's *actually* happening inside your browser.
 
 This is by far the best way to optimize code. However, the next part details some other things that *I thought* would improve performance, but in fact didn't.
 
@@ -554,20 +560,26 @@ On paper, [`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/A
 
 First, I used it to cast downloaded textures to WebGL textures; usually, this takes a *little* CPU time, so I wanted to do that when nothing else was going on at the moment, to prevent blocking any rendering.
 
-Turns out, on mobile phones, while you are using touch events, **no single** `requestIdleCallback` function will be fired. So when I was pinching on a touch device, the Micrio image would not get sharper: the image was downloaded, but was not cast to a WebGL texture until *after I stopped pinching*.
+Turns out, on mobile phones, while you are using touch events, **no single** `requestIdleCallback` function will be fired. So when I was pinching on a touch device, the Micrio image would not get sharper: the tile texture image was downloaded, but was not cast to a WebGL texture until *after I stopped pinching*.
 
 That was a nice one to find out, since otherwise it seemed to be working quite well.
 
 
 ### Concluding
 
-> *Don't think too much!*
-     *-- my old German teacher*
+```
+"Don't think too much!"
+    - my old German teacher
+```
 
-Your browser is already the result of 25+ years of the biggest minds working together. It's now 2020, and you can place a lot more trust into its inner workings than you could, say, *when Internet Explorer was still a thing*.
+Your browser is already the result of 25+ years of the biggest minds working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, *when Internet Explorer was still a thing*.
 
-Only fix problems that are real problems; don't waste your time by making pre-assumptions that will fix a non-problem.
+Only fix problems that are real problems; don't waste your time by making assumptions that will fix a non-problem.
 
 
 
 # 8. Going to production
+
+# 9. Conclusions
+
+# 10. Afterthoughts and the future of WebAssembly
