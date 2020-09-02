@@ -514,7 +514,7 @@ Plus, the entire code architecture had just changed. Where before, it might not 
 Perhaps the most important thing I did to optimize things, was to examine the benchmarking test results: 
 
 1. *Which step is taking too much time, and how can we minimize that?*
-2. Backtracking your code until it worked better: turning off individual functions until it barely works, until the performance is acceptable;
+2. Backtracking that code until it worked better: turning off individual functions until it barely works, until the performance is acceptable;
 3. Finding the next thing to optimize, and `GOTO 1` *ad nauseam*.
 
 Keep measuring every step so you gain a better understanding of what's *actually* happening inside your browser.
@@ -599,8 +599,7 @@ Or for a better comparison:
 
 Above that, all frameskips were gone, and there was less memory used. These results were also the same over multiple runs.
 
-This proved to me that the whole operation was worth it. I was extatic and tired of the early mornings and nights that the optimizing took me.
-
+This proved to me that the whole operation was worth it. I was ecstatic, and tired of the early mornings and nights that the optimizing took me.
 
 
 
