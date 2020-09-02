@@ -430,7 +430,7 @@ Not to mention that for 360&deg; images, I could now do away with the three.js d
 
 ![1051KB of 2.9 vs 371KB of 3.0](img/comparison-uncompiled.svg)
 
-*I still feel smug about that.*
+*I still feel smug about this.*
 
 In the next chapter ([Going to production](#8-going-to-production)) I will write more about making the new library as compact as possible.
 
@@ -447,12 +447,43 @@ The Chrome devtools have great benchmarking tools, which I used. To be sure that
 
 The test itself was taking [this hi-res Micrio image](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder "The Fight Between Carnival and Lent by Pieter Bruegel the Elder"), removing all HTML-related rendering modules such as the markers, so we're left with just the image renderer, and running the **Benchmark** video tour, which is a 2-minute animated camera path through the image.
 
+All tests were run with the browser in fullscreen mode, on a 1440p screen (2560 x 1440px).
+
 **If you want to try it yourself, try the tour in both versions: [Micrio 3.0](https://micr.io/i/dzzLm/) vs [Micrio 2.9](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder?v=2.9)** (open *Video Tours* from the menu and select *Benchmark*).
 
 
-## 7.2. Quickest wins
+## 7.2. First results and subsequent runs
 
-## 7.3. Wrong assumptions
+First of all, the benchmarks were *not only* testing the JavaScript vs WebAssembly performance. A lot more had changed under the hood, for instance going from Canvas2D rendering to WebGL. These tests are by no means good comparisons for barebone JS versus WASM, but rather performance of Micrio as a whole.
+
+After the first few trial runs, while the test *looked* much smoother on my screen using Micrio 3.0, the measured results were not that impressive. Over the 2 minute measured timespan, there was only *14% less* CPU usage than with 2.9, tested over a number of trials.
+
+![First benchmarks were underwhelming](img/bench-1.png)
+*Meh.*
+
+There seemed to be overall less scripting, but *way* more rendering and painting going on. Also, the red dots in the timeline at the top indicate blocked frames, or frame skips. There were actually *more* than before now.
+
+This result yielded a week's worth of code optimizations, tweaking, and small rewrites. In the next section I will summarize a few do's and don'ts, but after a while, the results were quite different:
+
+
+![Last benchmarks were overwhelming](img/bench-1.png)
+*Time for celebration*
+
+Or for a better comparison:
+
+![64% less CPU used in 3.0](img/bench-results.png)
+
+**64% less CPU used than in 2.9!**
+
+Above that, all frameskips were gone, and there was less memory used. These results were also the same over multiple runs.
+
+This proved to me that the whole operation was worth it. I was extatic and tired of the early mornings and nights that the optimizing took me.
+
+
+## 7.3. Quickest wins
+
+## 7.4. Wrong assumptions
+
 
 
 
