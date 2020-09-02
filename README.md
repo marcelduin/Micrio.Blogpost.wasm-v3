@@ -428,6 +428,8 @@ That means that I had **73KB** less Micrio-code after the migration, for exactly
 
 Not to mention that for 360&deg; images, I could now do away with the three.js dependency, which was an extra **607KB** of JavaScript.
 
+![1051KB of 2.9 vs 371KB of 3.0](img/comparison-uncompiled.svg)
+
 *I still feel smug about that.*
 
 In the next chapter ([Going to production](#8-going-to-production)) I will write more about making the new library as compact as possible.
@@ -445,9 +447,7 @@ The Chrome devtools have great benchmarking tools, which I used. To be sure that
 
 The test itself was taking [this hi-res Micrio image](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder "The Fight Between Carnival and Lent by Pieter Bruegel the Elder"), removing all HTML-related rendering modules such as the markers, so we're left with just the image renderer, and running the **Benchmark** video tour, which is a 2-minute animated camera path through the image.
 
-**If you want to try it yourself, try the tour in both versions: [Micrio 3.0](https://micr.io/i/dzzLm/) vs [Micrio 2.9](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder?v=2.9)** (open *Video Tours* from the menu en select *Benchmark*).
-
-
+**If you want to try it yourself, try the tour in both versions: [Micrio 3.0](https://micr.io/i/dzzLm/) vs [Micrio 2.9](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder?v=2.9)** (open *Video Tours* from the menu and select *Benchmark*).
 
 
 ## 7.2. Quickest wins
