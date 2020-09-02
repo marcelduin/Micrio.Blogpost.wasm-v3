@@ -290,7 +290,7 @@ Now the basic setup was known, this is where it became more difficult. I had to 
 
 This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
 
-![A schema I found googling "WebGL pipeline"](img/digitaltechnik.jpg)*(I also don't get why I found this googling for "WebGL pipeline")*
+![A schema I found googling "WebGL pipeline"](img/pipeline.svg)*The German WebGL rendering pipeline, you're welcome*
 
 ### 6.2.1. Abstracting the image tile logic
 The input for AssemblyScript are only the Micrio image parameters: a unique ID, the image width and height. The output must be WebGL-ready vertex and texture UV array buffers, containing all coordinates of all tiles and their individual texture mappings.
