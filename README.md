@@ -251,7 +251,7 @@ However, this is optional and I ended up using the JavaScript [WebAssembly API](
 
 ![Loading a wasm file](img/instantiate.png "Gluing it yourself")
 
-The compiled binary will then offer an `exports` object, containing the functions that you have written in the AssemblyScript file, which you can immediately call from JavaScript as if they were normal functions.
+The compiled binary will then offer an `exports` object, containing the functions that you have exported in the AssemblyScript file, which you can immediately call from JavaScript as if they were normal functions.
 
 Wait.. "*which you can immediately call from JavaScript as if they were normal functions*"...
 
@@ -394,7 +394,7 @@ This module acts as a 2-way street between JS and WASM and takes care of a few t
 * Loading the WASM binary and setting up the shared memory buffer;
 * Acting as a transparent hub between JS modules and WASM;
 * Sending all required user events (mouse, key, touch) to WASM;
-* Downloading the requested tile images and links them to WebGL as textures;
+* Downloading the requested tile images and linking them to WebGL as textures;
 * Controlling the main rendering loop for both WASM and JS (for correctly placing/animating HTML elements like image markers).
 
 Bit by bit, over the course of a few weeks, this engine was made as a perfect fit to work together with the rest of the JS client, saving some hardly used and exotic implementations (but still used by 1% of the Micrio projects) for last.
