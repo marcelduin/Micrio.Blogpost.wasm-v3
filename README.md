@@ -577,7 +577,7 @@ This fix didn't change CPU usage a lot, but it *did* remove almost all of the sk
 
 ### General point
 
-> "Don't think too much!" (-- my old German teacher)
+> "Don't think too much!" -- my old German teacher
 
 Your browser is already the result of 25+ years of the biggest minds on the web working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, 10 years ago. Some of my performance problems were due to my overthinking, and the resulting *overengineering*.
 
