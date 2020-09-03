@@ -59,7 +59,7 @@ The initial application of AssemblyScript WASM to Micrio 2.9
 	Thinking about the next steps
 
 6. [**Third Rewrite: AssemblyScript &amp; WebGL**](#6-third-rewrite-assemblyscript-webgl):
-4 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
+6 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
 	1. **[Directly connecting WebAssembly's Memory to WebGL](#61-connecting-webassemblys-memory-to-webgl)**:
 	Taking JS out of the equasion
@@ -71,7 +71,7 @@ The initial application of AssemblyScript WASM to Micrio 2.9
 		2. **[360&deg; images](#622-360-images)**
 
 	3. **[Connecting it to JavaScript](#63-connecting-it-to-javascript)**:
-	Replacing the twin engine by our new monster
+	Replacing ye olde twin engine by our new monster
 
 	4. **[Rendering the lot](#64-rendering-the-lot)**:
 	Connecting everything and making it work again
@@ -83,17 +83,20 @@ First results, what and how to measure, what to improve
 	1. [**Benchmark till you drop**](#71-benchmark-till-you-drop):
 	The setup
 
-	1. [**The testing process**](#72-the-testing-process):
+	2. [**The testing process**](#72-the-testing-process):
 	Being precise is important
 
 	3. [**First results and subsequent runs**](#73-first-results-and-subsequent-runs):
-	From Meh to Whee
+	Did it deliver?
 
 	4. [**Quickest wins**](#74-quickest-wins):
 	Takeaways if you're doing the same as me
 
 	5. [**Wrong assumptions**](#75-wrong-assumptions):
 	The blooper reel, but also wise lessons
+
+	6. [&&The final test results are in**](#76-the-final-test-results-are-in):
+	*Drum roll*
 
 
 8. [**Going to production**](#8-going-to-production):
@@ -109,7 +112,7 @@ Compiling for the web, server microservices using WASM, freedom of choice of pro
 
 # 1. Introduction
 
-Hi! I'm Marcel and I'm the creator of the [Micrio storytelling platform](https://micr.io) -- basically a high performance ultra high resolution image viewer, for both 2D and 360&deg; images, with added markers, tours, audio, etc.
+Hi! I'm Marcel and I'm the creator of the [Micrio storytelling platform](https://micr.io) built around a high performance ultra high resolution image viewer, for both 2D and 360&deg; images, with added markers, tours, audio, and more.
 
 As a hardcore vanilla JS dev, I started the Micrio JS client development back in 2015, pushing to find the best balance between hardware performance (60fps all the way), minimal CPU and bandwidth use (for older and mobile devices), and still deliver a sharp and high quality viewing experience.
 
@@ -129,7 +132,7 @@ For Micrio, it is **vital** that the performance on the client's browser is as g
 
 Because Micrio is being used for an [ever growing list](https://micr.io/showases) of awesome projects, the most important thing is to make sure that for whoever visits a Micrio project, **it must work, and work well**.
 
-So also keeping compatibility is hugely important: I don't want to show the user a "**your browser is too old for this**" warning, while still keeping up with the latest tech. This balance is hard to find and having to keep compatibility with older tech is sometimes frustrating. Nonetheless, the library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
+So also keeping compatibility is hugely important: I don't want to show the user a "**your browser is not supported**" warning, while still keeping up with the latest tech. This balance is hard to find and having to keep compatibility with older tech is sometimes frustrating. Nonetheless, the library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
 
 The current tech stack of (the compiled) [version 2.9](https://b.micr.io/micrio-2.9.min.js):
 
@@ -144,7 +147,7 @@ As you can imagine, displaying a [25.500 x 25.500 pixel](https://micr.io/i/ZDQxY
 
 Now, Micrio 2.9 *isn't bad*. It runs pretty smooth on all devices. But with WebAssembly around the corner, this could make a *big* difference in making Micrio's performance even better, and could improve the code architecture a lot.
 
-And, perhaps, this could also mark the setup for a new major version, where I will draw a clear line and drop all compatibility fixes and polyfills for older browsers: **Micrio 3.0**.
+And, perhaps, this could also mark the setup for a new major version, where I will draw a clear line and drop all compatibility and polyfills for older browsers: **Micrio 3.0**.
 
 
 
@@ -320,7 +323,9 @@ As the developer, you are **100%** in control of this memory. Micrio is an excel
 ![180 bytes of memory for a single 2D tile](img/singletile.png "A single 2D tile takes 180 bytes of memory")
 
 
-The cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object. So if WebAssembly can create an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and texture coordinate buffers!
+The cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object.
+
+So.. if WebAssembly can create an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and texture coordinate buffers!
 
 That means that the output of WebAssembly is **directly connected** to WebGL's input by JavaScript *just once*, at initialization.
 
@@ -381,7 +386,7 @@ In the end, both the 2D and 360&deg; images result in a single array buffer usea
 
 Since I was replacing modules inside the Micrio JavaScript client instead of working from scratch, I had to first remove all old JS-based rendering code (the *twin engine*), and then make the *glue* discussed earlier, linking the WebAssembly program as transparently as possible to the existing internal Micrio JS APIs.
 
-Not only was this a fun thing to do, it was also a great sanity check of the entire Micrio JS architecture; there was too much rendering logic in modules where it wasn't supposed to be!
+Not only was this a fun thing to do, it was also a great sanity check of the entire Micrio JS architecture, seeing if there was rendering logic in places where it wasn't supposed to be.
 
 After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR WASM` comments, it was time to use the newly created `Micrio.WASM` module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
 
@@ -458,31 +463,31 @@ All tests were run with the browser in fullscreen mode, on a 1440p screen (2560 
 **If you want to try it yourself, try the tour in both versions: [Micrio 3.0](https://micr.io/i/dzzLm/) vs [Micrio 2.9](https://micr.io/i/dzzLm/the-fight-between-carnival-and-lent-pieter-bruegel-the-elder?v=2.9)** (open *Video Tours* from the menu and select *Benchmark*).
 
 
-## 7.2. The testing progress
+## 7.2. The testing process
 
 Before we go to the results, these are some general things I've learned in the bencharking and subsequent optimization process.
 
 
 **Tip 1: if you can, make the benchmark as quick and meaningful as possible**
 
-Since I was using my work laptop for benchmarking, and I made the benchmark test tour *2 whole minutes long*, which is just too short to leave it running and come back later and feels too long to wait out, especially since I wasn't multitasking during the benchmarks, I *really* wished I made the benchmark at least 50% shorter. But since I already had a lot of results when I realised this, I didn't want to blemish them by changing the tour halfway, or by redoing them all.
+Since I was using my work laptop for benchmarking, and I made the benchmark test tour *2 whole minutes long* (which is too *short* to leave it running and come back later, but too *long* to wait it out), especially since I wasn't multitasking during the benchmarks, I *really* wished I made the benchmark at least 50% shorter. But since I already had a lot of results when I realised this, I didn't want to blemish them by changing the tour halfway, or by redoing them all.
 
 So I stuck with the 2:00 tour. I can still dream every frame.
 
 
 **Tip 2: use a private browser window without any extensions for benchmarking**
 
-Also doing some benchmarking on another browser running Chromium (Brave), I realised some numbers were *way* off from Chrome's results. After research, this had to do with some Chrome extensions running, and definitely influencing the performance.
+Also doing some benchmarking on another browser running Chromium (Brave), I realised some numbers were *way* off from Chrome's results. After research, this had to do with some Chrome extensions running that were definitely influencing the performance.
 
 
 **Tip 3: for your sanity's sake, do a baseline test every once in a while**
 
-To be sure, and because you never know the state of the testing machine, every few tests I would do a baseline test to see if the results were still the same as before. In this way, I made sure that there were no external factors tainting the test scores. Because results will never be 100% the same, you need to know those margins to know when any change you make is significant.
+To be sure, and because you never know the state of the testing machine, every few tests do a baseline test to see if the results were still the same as before. In this way, you can make sure that there are no external factors tainting the test scores. Because results will never be 100% the same, you need to know those margins to know when any change you make is significant.
 
 
 **Tip 4: don't do bulk changes between benchmarks**
 
-Sometimes the mental result of a benchmark for me would be to change several small things at once, and then run the benchmark again.
+Sometimes after a benchmark, I would change several small things at once, and then run the benchmark again to see if I *fixed it*.
 
 After *a lot* of trial runs, I found out that this was not a smart thing to do. Some subtle settings (like turning alpha transparency on or off for WebGL) might be a single `true` to `false` setting, but could a have major performance impact. And without testing that setting individually, *you just don't know that*. It might feel too menial, but it's really worth it.
 
@@ -507,7 +512,7 @@ After a long sigh, this result yielded a week's worth of code optimizations, twe
 
 So, what did I really change in those optimizations? And more interestingly: *could I do the same optimizations to 2.9 and get the same results*?
 
-Well, for sure up to a certain level. For instance, the entire tile image download logic was also rewritten, where code from 2016 was replaced with code from 2020. I think that might also have a positive impact on 2.9. However, most optimizations really had a lot to do with tweaking the WebGL rendering pipeline, the frame drawing logic (which was drastically different in 3.0), and more small things.
+Well, for sure up to a certain level. For instance, the entire tile image download logic was also rewritten, where code from 2018 was replaced with code from 2020. I think that might also have a positive impact on 2.9. However, most optimizations really had a lot to do with tweaking the WebGL rendering pipeline, the frame drawing logic (which was drastically different in 3.0), and more small things.
 
 Plus, the entire code architecture had just changed. Where before, it might not be easy to make a single change that would impact both the 2D and 360&deg; rendering pipeline, now all rendering used a single pipeline, making optimizing it so much easier and nice to do.
 
@@ -532,11 +537,11 @@ Okay. The Micrio blooper reel. What did I do horribly wrong, and why did I do th
 ### Don't use `WebWorkers` for simple download tasks
 A lot of Micrio involves downloading *a lot* of individual tile-textures when the user is panning and zooming the large images. [WebWorkers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) are asynchronously running separate CPU thread you can call from your main JS thread, which you can give a task to do on its own.
 
-I thought it would be a good idea to offload the texture loading to 3 separate WebWorkers. On paper this is a good idea-- the downloading and casting to `ImageBitmap` can be done in the WebWorker, and when it's done, it just passes the bitmap back to the main JS thread, so it can be linked as a WebGL texture.
+I thought it would be a good idea to offload the texture loading to 3 separate WebWorkers. On paper this is a good idea: the downloading and casting to `ImageBitmap` can be done in the WebWorker, and when it's done, it just passes the bitmap back to the main JS thread, so it can be linked as a WebGL texture.
 
 After using this for a while, I found out that this was actually a large performance stopper. I haven't fully dived into it, but I do know this:
 
-**I assumed I knew what was good for the browser**
+**I assumed I knew what was good for the browser.**
 
 What I forgot is that the browser engine is *heavily* optimized by itself, and by using the WebWorkers, I solved a problem before it became a problem. The browser on itself is optimized enough to simply download all the images in the main JS thread.
 
@@ -554,7 +559,7 @@ That was a nice one to find out, since otherwise it seemed to be working quite w
 ### Take best practises seriously
 *Note*: Until writing this article I thought this was common knowledge, but I couldn't find any source to back me up. It *is* a best practice however!
 
-In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early has possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than than a few milliseconds, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
+In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early as possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than than a few milliseconds, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
 
 This is what caused earlier Micrio versions a lot of janks and frameskips; the steps in the render functions were:
 
@@ -577,12 +582,11 @@ This fix didn't change CPU usage a lot, but it *did* remove almost all of the sk
 
 -- my old German teacher
 
-Your browser is already the result of 25+ years of the biggest minds working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, *when Internet Explorer was still a thing*.
+Your browser is already the result of 25+ years of the biggest minds on the web working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, *when Internet Explorer was still a thing*.
 
 Some of my performance problems were due to my overthinking, and the resulting *overengineering*.
 
 **Tip 5: Only fix problems that are real problems; don't waste your time by making assumptions that will fix a non-problem.**
-
 
 ## 7.6. The final test results are in
 
