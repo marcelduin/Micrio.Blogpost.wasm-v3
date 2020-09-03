@@ -53,8 +53,10 @@ The initial application of AssemblyScript WASM to Micrio 2.9
 
 	1. **[Going Atomic](#51-going-atomic)**:
 	Rewriting just a tiny part of JS
+
 	2. **[Bundling the compiled WASM inside the JS file](#52-bundling-the-compiled-wasm-inside-the-js-file)**:
 	Keeping the resulting binary in the same JS file
+
 	3. **[The Realization](#53-the-realization)**:
 	Thinking about the next steps
 
@@ -66,9 +68,6 @@ The initial application of AssemblyScript WASM to Micrio 2.9
 
 	2. **[Moving the image tile logic to AssemblyScript](#62-moving-the-image-tile-logic-to-assemblyscript)**:
 	Back to square zero
-
-		1. **[2D images](#621-2d-images)**
-		2. **[360&deg; images](#622-360-images)**
 
 	3. **[Connecting it to JavaScript](#63-connecting-it-to-javascript)**:
 	Replacing ye olde twin engine by our new monster
