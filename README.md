@@ -33,43 +33,36 @@ In this article, some technical terms will be used. While I can't detail 100% of
 
 # Table of Contents
 
-1. [**Introduction**](#1-introduction):
-What is this article all about
+1. [**Introduction**](#1-introduction)
 
-2. [**Current Situation**](#2-the-current-situation):
-Micrio 2.9, short history, current tech stack, browser compatibility
+2. [**Current Situation**](#2-the-current-situation)
 
-3. [**The Discovery**](#3-the-discovery):
-From asm.js in 2013 to WebAssembly in 2020
+3. [**The Discovery**](#3-the-discovery)
 
-4. [**First Rewrite: C++ and emscripten**](#4-first-rewrite-c-and-emscripten):
-From JS to C++
+4. [**First Rewrite: C++ and emscripten**](#4-first-rewrite-c-and-emscripten)
 
-	1. **[First Results](#41-first-results)**
+	1. [**First Results**](#41-first-results)
 
-5. [**Second Rewrite: AssemblyScript**](#5-second-rewrite-assemblyscript):
-The initial application of AssemblyScript Wasm to Micrio 2.9
+5. [**Second Rewrite: AssemblyScript**](#5-second-rewrite-assemblyscript)
 
-	1. **[Going Atomic](#51-going-atomic)**
+	1. [**Going Atomic**](#51-going-atomic)
 
-	2. **[Bundling the compiled Wasm inside the JS file](#52-bundling-the-compiled-wasm-inside-the-js-file)**
+	2. [**Bundling the compiled Wasm inside the JS file**](#52-bundling-the-compiled-wasm-inside-the-js-file)
 
-	3. **[The Realization](#53-the-realization)**
+	3. [**The Realization**](#53-the-realization)
 
-6. [**Third Rewrite: AssemblyScript &amp; WebGL**](#6-third-rewrite-assemblyscript-webgl):
-6 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
+6. [**Third Rewrite: AssemblyScript &amp; WebGL**](#6-third-rewrite-assemblyscript-webgl)
 
-	1. **[Directly connecting WebAssembly's Memory to WebGL](#61-connecting-webassemblys-memory-to-webgl)**
+	1. [**Directly connecting WebAssembly's Memory to WebGL**](#61-connecting-webassemblys-memory-to-webgl)
 
-	2. **[Moving the image tile logic to AssemblyScript](#62-moving-the-image-tile-logic-to-assemblyscript)**
+	2. [**Moving the image tile logic to AssemblyScript**](#62-moving-the-image-tile-logic-to-assemblyscript)
 
-	3. **[Connecting it to JavaScript](#63-connecting-it-to-javascript)**
+	3. [**Connecting it to JavaScript**](#63-connecting-it-to-javascript)
 
-	4. **[Rendering the lot](#64-rendering-the-lot)**
+	4. [**Rendering the lot**](#64-rendering-the-lot)
 
 
-7. [**Putting it to the test**](#7-putting-it-to-the-test):
-First results, what and how to measure, what to improve
+7. [**Putting it to the test**](#7-putting-it-to-the-test)
 
 	1. [**Benchmark till you drop**](#71-benchmark-till-you-drop)
 
@@ -84,14 +77,11 @@ First results, what and how to measure, what to improve
 	6. [**The final test results are in**](#76-the-final-test-results-are-in)
 
 
-8. [**Going to production**](#8-going-to-production):
-Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
+8. [**Going to production**](#8-going-to-production)
 
-9. [**Conclusions**](#9-conclusions):
-The result: pros and cons. When (not) to use Wasm, best practices, thoughts on the future.
+9. [**Conclusions**](#9-conclusions)
 
-10. [**Afterthoughts and the future**](#10-afterthoughts-and-the-future-of-webassembly):
-Compiling for the web, server microservices using Wasm, freedom of choice of programming language, and how it will really change the landscape of technology, the fabric of our world, and might be the ultimate answer of life, the universe, and everything.
+10. [**Afterthoughts and the future**](#10-afterthoughts-and-the-future-of-webassembly)
 
 
 
