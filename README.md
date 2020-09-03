@@ -387,7 +387,7 @@ Since I was replacing modules inside the Micrio JavaScript client instead of wor
 
 Not only was this a fun thing to do, it was also a great sanity check of the entire Micrio JS architecture, seeing if there was rendering logic in places where it wasn't supposed to be.
 
-After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR Wasm` comments, it was time to implement the newly created `Micrio.Wasm` JavaScript module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
+After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR WASM` comments, it was time to implement the newly created `Micrio.Wasm` JavaScript module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
 
 This module acts as a 2-way street between JS and Wasm and takes care of a few things:
 
@@ -577,13 +577,9 @@ This fix didn't change CPU usage a lot, but it *did* remove almost all of the sk
 
 ### General point
 
-> "Don't think too much!"
+> "Don't think too much!" (-- my old German teacher)
 
--- my old German teacher
-
-Your browser is already the result of 25+ years of the biggest minds on the web working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, 10 years ago.
-
-Some of my performance problems were due to my overthinking, and the resulting *overengineering*.
+Your browser is already the result of 25+ years of the biggest minds on the web working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, 10 years ago. Some of my performance problems were due to my overthinking, and the resulting *overengineering*.
 
 **Tip 5: Only fix problems that are real problems; don't waste your time by making assumptions that will fix a non-problem.**
 
