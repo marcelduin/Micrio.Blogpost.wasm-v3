@@ -45,57 +45,43 @@ From asm.js in 2013 to WebAssembly in 2020
 4. [**First Rewrite: C++ and emscripten**](#4-first-rewrite-c-and-emscripten):
 From JS to C++
 
-	1. **[First Results](#41-first-results)**:
-	How C++ was not the perfect choice
+	1. **[First Results](#41-first-results)**
 
 5. [**Second Rewrite: AssemblyScript**](#5-second-rewrite-assemblyscript):
 The initial application of AssemblyScript Wasm to Micrio 2.9
 
-	1. **[Going Atomic](#51-going-atomic)**:
-	Rewriting just a tiny part of JS
+	1. **[Going Atomic](#51-going-atomic)**
 
-	2. **[Bundling the compiled Wasm inside the JS file](#52-bundling-the-compiled-wasm-inside-the-js-file)**:
-	Keeping the resulting binary in the same JS file
+	2. **[Bundling the compiled Wasm inside the JS file](#52-bundling-the-compiled-wasm-inside-the-js-file)**
 
-	3. **[The Realization](#53-the-realization)**:
-	Thinking about the next steps
+	3. **[The Realization](#53-the-realization)**
 
 6. [**Third Rewrite: AssemblyScript &amp; WebGL**](#6-third-rewrite-assemblyscript-webgl):
 6 months of back to the drawing board -- back to basics with WebGL and manually created memory buffers
 
-	1. **[Directly connecting WebAssembly's Memory to WebGL](#61-connecting-webassemblys-memory-to-webgl)**:
-	Taking JS out of the equasion
+	1. **[Directly connecting WebAssembly's Memory to WebGL](#61-connecting-webassemblys-memory-to-webgl)**
 
-	2. **[Moving the image tile logic to AssemblyScript](#62-moving-the-image-tile-logic-to-assemblyscript)**:
-	Back to square zero
+	2. **[Moving the image tile logic to AssemblyScript](#62-moving-the-image-tile-logic-to-assemblyscript)**
 
-	3. **[Connecting it to JavaScript](#63-connecting-it-to-javascript)**:
-	Replacing ye olde twin engine by our new monster
+	3. **[Connecting it to JavaScript](#63-connecting-it-to-javascript)**
 
-	4. **[Rendering the lot](#64-rendering-the-lot)**:
-	Connecting everything and making it work again
+	4. **[Rendering the lot](#64-rendering-the-lot)**
 
 
 7. [**Putting it to the test**](#7-putting-it-to-the-test):
 First results, what and how to measure, what to improve
 
-	1. [**Benchmark till you drop**](#71-benchmark-till-you-drop):
-	The setup
+	1. [**Benchmark till you drop**](#71-benchmark-till-you-drop)
 
-	2. [**The testing process**](#72-the-testing-process):
-	Being precise is important
+	2. [**The testing process**](#72-the-testing-process)
 
-	3. [**First results and subsequent runs**](#73-first-results-and-subsequent-runs):
-	Did it deliver?
+	3. [**First results and subsequent runs**](#73-first-results-and-subsequent-runs)
 
-	4. [**Quickest wins**](#74-quickest-wins):
-	Takeaways if you're doing the same as me
+	4. [**Quickest wins**](#74-quickest-wins)
 
-	5. [**Wrong assumptions**](#75-wrong-assumptions):
-	The blooper reel, but also wise lessons
+	5. [**Wrong assumptions**](#75-wrong-assumptions)
 
-	6. [**The final test results are in**](#76-the-final-test-results-are-in):
-	:performing_arts:
+	6. [**The final test results are in**](#76-the-final-test-results-are-in)
 
 
 8. [**Going to production**](#8-going-to-production):
@@ -529,7 +515,7 @@ This is by far the best way to optimize code. However, the next part details som
 
 ## 7.5. Wrong assumptions
 
-> "I know what's good for my computer!"
+> "I know what's good for my computer!" -- *me*
 
 Okay. The Micrio blooper reel. What did I do horribly wrong, and why did I do that?
 
