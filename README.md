@@ -427,7 +427,7 @@ After all said and done, and not quite as straightforward as described here (360
 
 So, after the entire ordeal of the previous chapter, we are now left with a *testable* Micrio JS/WASM/WebGL client. Not yet ready for production, but slowly going from first steps to the full performance potential.
 
-The new client already *felt* a lot more smooth in my browser. Zooming, panning and animating clearly went more smooth than the previous JS-only version.
+The new client already *felt* a lot smoother in my browser. Zooming, panning and animating clearly went more smooth than the previous JS-only version.
 
 This was also not a very big surprise, just looking at the difference in uncompiled code of both versions:
 
@@ -444,7 +444,7 @@ Not to mention that for 360&deg; images, I could now do away with the three.js d
 
 In the next chapter ([Going to production](#8-going-to-production)) I will write more about making the new library as compact as possible.
 
-But first, I want to *prove* that the last few months were not spent in vain, and actually have some measurable results of the differences between Micrio 2.9 en 3.0.
+But first, I want to *prove* that the last few months were not spent in vain, and actually have some measurable results of the differences between Micrio 2.9 and 3.0.
 
 
 ## 7.1. Benchmark till you drop
