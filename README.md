@@ -134,14 +134,14 @@ Because Micrio is being used for an [ever growing list](https://micr.io/showases
 
 So also keeping compatibility is hugely important: I don't want to show the user a "**your browser is not supported**" warning, while still keeping up with the latest tech. This balance is hard to find and having to keep compatibility with older tech is sometimes frustrating. Nonetheless, the library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
 
-The current tech stack of (the compiled) [version 2.9](https://b.micr.io/micrio-2.9.min.js):
+The current tech stack of [version 2.9](https://b.micr.io/micrio-2.9.min.js):
 
 * Source files are ES6 JavaScript modules
 * This compiles (using the awesome [closure compiler](https://developers.google.com/closure/compiler)) to JavaScript ES5 so it works on older browsers
 * Canvas2D rendering for 2D images
 * three.js/WebGL rendering for 360&deg; images
-* Using [ShadowRoot](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot) + polyfills
 * Using [CustomElements](https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements) + polyfills for the `<micr-io>` tag
+* Using [ShadowRoot](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot) + polyfills
 
 As you can imagine, displaying a [25.500 x 25.500 pixel](https://micr.io/i/ZDQxY/hubble-legacy-field-stsci-h-p1917a-f) in your browser in a matter of milliseconds, allowing the user to freely zoom in and navigate, requires a little bit of processing power.
 
@@ -157,7 +157,7 @@ Already back in 2013, a [demo was released](https://www.youtube.com/watch?v=BV32
 
 This was the first application I saw of [asm.js](https://en.wikipedia.org/wiki/Asm.js) -- allowing compiled code to run inside your browser at near-native speeds, using a super-optimized CPU-friendly subset of JavaScript. You could get this to work by compiling to [LLVM](https://en.wikipedia.org/wiki/LLVM)-compatible formats using for instance [emscripten](https://emscripten.org/) for C/C++-code. 
 
-This was a definite game changer for the web and left me wanting to try it out myself for the longest time (*spoiler: it took 6 years*). It was also picked up brilliantly by the major browser engines, each in their own optimizing way.
+This was a definite game changer for the web and left me wanting to try it out myself for the longest time (*spoiler: 6 years*). It was also picked up brilliantly by the major browser engines, each in their own optimizing way.
 
 Fast forward to March 2017. [WebAssembly is introduced](https://hacks.mozilla.org/2017/03/why-webassembly-is-faster-than-asm-js/) as an even more powerful way to run binary code in your browser. This joint effort by all major browsers (Firefox, Chrome, Safari and Internet Explorer) was focussed on bundling all separate efforts made so far by running compiled code inside the browser. I was blown away to realise that *all these browsers have worked together on this*, putting aside their differences.
 
