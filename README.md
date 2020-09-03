@@ -395,8 +395,8 @@ This module acts as a 2-way street between JS and WASM and takes care of a few t
 * Loading the WASM binary and setting up the shared memory buffer;
 * Acting as a transparent hub between JS modules and WASM;
 * Sending all required user events (mouse, key, touch) to WASM;
-* Downloads the requested tile images and links them to WebGL as textures;
-* It's in control of the main rendering loop for both WASM and JS (for correctly placing/animating HTML elements like markers).
+* Downloading the requested tile images and links them to WebGL as textures;
+* Controlling the main rendering loop for both WASM and JS (for correctly placing/animating HTML elements like image markers).
 
 Bit by bit, over the course of a few weeks, this engine was made as a perfect fit to work together with the rest of the JS client, saving some hardly used and exotic implementations (but still used by 1% of the Micrio projects) for last.
 
@@ -561,7 +561,7 @@ That was a nice one to find out, since otherwise it seemed to be working quite w
 
 In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early as possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than than a few milliseconds, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
 
-This is what caused earlier Micrio versions a lot of janks and frameskips; the steps in the render functions were:
+This is what caused earlier Micrio versions a lot of janks and frameskips. The steps in the render functions were:
 
 1. Update all positions and draw everything on the screen;
 2. Check if I need to request another frame (based on whether all required tiles are loaded, or there is a camera animation running);
