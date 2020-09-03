@@ -388,7 +388,7 @@ Since I was replacing modules inside the Micrio JavaScript client instead of wor
 
 Not only was this a fun thing to do, it was also a great sanity check of the entire Micrio JS architecture, seeing if there was rendering logic in places where it wasn't supposed to be.
 
-After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR WASM` comments, it was time to use the newly created `Micrio.WASM` module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
+After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR WASM` comments, it was time to implement the newly created `Micrio.WASM` JavaScript module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
 
 This module acts as a 2-way street between JS and WASM and takes care of a few things:
 
@@ -396,7 +396,7 @@ This module acts as a 2-way street between JS and WASM and takes care of a few t
 * Acting as a transparent hub between JS modules and WASM;
 * Sending all required user events (mouse, key, touch) to WASM;
 * Downloads the requested tile images and links them to WebGL as textures;
-* It's in control of the main rendering loop for both WASM and JS (HTML elements like markers).
+* It's in control of the main rendering loop for both WASM and JS (for correctly placing/animating HTML elements like markers).
 
 Bit by bit, over the course of a few weeks, this engine was made as a perfect fit to work together with the rest of the JS client, saving some hardly used and exotic implementations (but still used by 1% of the Micrio projects) for last.
 
@@ -405,7 +405,7 @@ Bit by bit, over the course of a few weeks, this engine was made as a perfect fi
 
 This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All you need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
-The functions to decide what those tiles are, are quite different for 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, of which I will spare you the details here.
+The functions to decide what those tiles are, are quite different between 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, of which I will spare you the details here.
 
 So now we are at the point where everything is in place to draw a frame in Micrio. To do this, AssemblyScript needs to know:
 
@@ -475,7 +475,7 @@ Since I was using my work laptop for benchmarking, and I made the benchmark test
 So I stuck with the 2:00 tour. I can still dream every frame.
 
 
-**Tip 2: use a private browser window without any extensions for benchmarking**
+**Tip 2: use a private browser window without any extensions running**
 
 Also doing some benchmarking on another browser running Chromium (Brave), I realised some numbers were *way* off from Chrome's results. After research, this had to do with some Chrome extensions running that were definitely influencing the performance.
 
@@ -530,7 +530,7 @@ This is by far the best way to optimize code. However, the next part details som
 
 ## 7.5. Wrong assumptions
 
-*I know what's good for my computer!*
+> "I know what's good for my computer!"
 
 Okay. The Micrio blooper reel. What did I do horribly wrong, and why did I do that?
 
@@ -563,15 +563,15 @@ In a `requestAnimationFrame`-loop, put your next frame request (the next `reques
 
 This is what caused earlier Micrio versions a lot of janks and frameskips; the steps in the render functions were:
 
-1. Draw everything and update all positions;
+1. Update all positions and draw everything on the screen;
 2. Check if I need to request another frame (based on whether all required tiles are loaded, or there is a camera animation running);
-3. If a new frame is required, request that one and `GOTO 1`.
+3. If a new frame is required, request one and `GOTO 1`.
 
-This makes total sense-- you don't want to have an ever-running animation loop when there's no updates to draw. But also, you don't want to do the actual drawing on your screen *before* requesting your next frame.
+This makes total sense-- you don't want to have an ever-running animation loop when there's no updates to draw. But also, you don't want to do the *actual drawing on your screen* before requesting your next frame, since that takes a few valuable milliseconds extra.
 
 So in WebAssembly, I made a `.shouldRequest()` function, which firstly did the pre-work required for the rendering, returning a `true` or `false` for whether JavaScript should ask for a next frame or not.
 
-After *that*, all the real drawing logic was done.
+After *that*, all the real drawing was done.
 
 This fix didn't change CPU usage a lot, but it *did* remove almost all of the skipped frames.
 
@@ -582,7 +582,7 @@ This fix didn't change CPU usage a lot, but it *did* remove almost all of the sk
 
 -- my old German teacher
 
-Your browser is already the result of 25+ years of the biggest minds on the web working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, *when Internet Explorer was still a thing*.
+Your browser is already the result of 25+ years of the biggest minds on the web working together. It's now 2020, and you can place a lot more trust into its inner workings than, say, 10 years ago.
 
 Some of my performance problems were due to my overthinking, and the resulting *overengineering*.
 
@@ -597,9 +597,9 @@ After the optimizations, of which none could be singled out to be *the thing tha
 
 Or for a better comparison:
 
-![64% less CPU used in 3.0](img/bench-results.png "Numbers don't lie")
+![65% less CPU used in 3.0](img/bench-results.png "Numbers don't lie")
 
-**64% less CPU used than in 2.9!**
+**65% less CPU used than in 2.9!**
 
 Above that, all frameskips were gone, and there was less memory used. These results were also the same over multiple runs.
 
