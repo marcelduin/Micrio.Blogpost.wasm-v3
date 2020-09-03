@@ -115,7 +115,7 @@ Hi! I'm Marcel and I'm the creator of the [Micrio storytelling platform](https:/
 
 As a hardcore vanilla JS dev, I started the Micrio JS client development back in 2015, pushing to find the best balance between hardware performance (60fps all the way), minimal CPU and bandwidth use (for older and mobile devices), and still deliver a sharp and high quality viewing experience.
 
-WebAssembly (Wasm) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
+[WebAssembly](https://webassembly.org/) (Wasm) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
 Basically, this means you can run compiled code written in a variety of programming languages (C/C++, Rust, Go, AssemblyScript, [and many more](https://github.com/appcypher/awesome-wasm-langs)) in your browser, without any need for plugins. In its purest form, you will need some JavaScript to get it running and to communicate with the browser. For instance if you want to have a graphical output such as a game, you will need to link your program to work with available renderers, such as WebGL.
 
