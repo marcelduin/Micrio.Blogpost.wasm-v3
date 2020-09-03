@@ -15,8 +15,6 @@ This article will be the epic tale of my discovery of WebAssembly, and the journ
 
 In this article, some technical terms will be used. While I can't detail 100% of them, here is a summary of the most important ones:
 
-* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it *streams* a very large image to the viewer's browser by looking at which parts of the main image the user is looking at, and only downloading and showing those. One of those parts is called a **tile**;
-
 * **JavaScript** (JS): A programming language that your browser understands. It powers most of the interactive web;
 
 * **TypeScript**: A language built on top of JavaScript, to make the life of web developers easier;
@@ -25,7 +23,9 @@ In this article, some technical terms will be used. While I can't detail 100% of
 
 * **three.js**: [**three.js**](https://threejs.org) is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
 
-* **Canvas2D**: [**Canvas2D**](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D), next to WebGL, is a browser drawing technique for drawing flat, 2D graphics;
+* **Canvas2D**: Next to WebGL, [**Canvas2D**](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) is a browser drawing technique for drawing flat, 2D graphics;
+
+* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it *streams* a very large image to the viewer's browser by looking at which parts of the main image the user is looking at, and only downloading and showing those. One of those parts is called a **tile**;
 
 * **Array**: An **array** is nothing but a list of something, used in programming. In this article, all mentions of *arrays* are long, *very long* lists of numbers, like vector coordinates.
 
@@ -95,8 +95,8 @@ First results, what and how to measure, what to improve
 	5. [**Wrong assumptions**](#75-wrong-assumptions):
 	The blooper reel, but also wise lessons
 
-	6. [&&The final test results are in**](#76-the-final-test-results-are-in):
-	*Drum roll*
+	6. [**The final test results are in**](#76-the-final-test-results-are-in):
+	:performing_arts:
 
 
 8. [**Going to production**](#8-going-to-production):
