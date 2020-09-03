@@ -4,7 +4,7 @@
 
 # Abstract
 
-WebAssembly (WASM) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
+[WebAssembly](https://webassembly.org/) (Wasm) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
 [Micrio](https://micr.io) is a storytelling platform based around a high performance JavaScript library, allowing users to view and navigate ultra resolution images in a matter of milliseconds, as smoothly as possible. I created this platform and have been working on optimizing the client performance since 2015.
 
@@ -49,12 +49,12 @@ From JS to C++
 	How C++ was not the perfect choice
 
 5. [**Second Rewrite: AssemblyScript**](#5-second-rewrite-assemblyscript):
-The initial application of AssemblyScript WASM to Micrio 2.9
+The initial application of AssemblyScript Wasm to Micrio 2.9
 
 	1. **[Going Atomic](#51-going-atomic)**:
 	Rewriting just a tiny part of JS
 
-	2. **[Bundling the compiled WASM inside the JS file](#52-bundling-the-compiled-wasm-inside-the-js-file)**:
+	2. **[Bundling the compiled Wasm inside the JS file](#52-bundling-the-compiled-wasm-inside-the-js-file)**:
 	Keeping the resulting binary in the same JS file
 
 	3. **[The Realization](#53-the-realization)**:
@@ -102,10 +102,10 @@ First results, what and how to measure, what to improve
 Putting everything together in a single JS file, making it work on all browsers, reducing clutter and last minute code optimizations
 
 9. [**Conclusions**](#9-conclusions):
-The result: pros and cons. When (not) to use WASM, best practices, thoughts on the future.
+The result: pros and cons. When (not) to use Wasm, best practices, thoughts on the future.
 
 10. [**Afterthoughts and the future**](#10-afterthoughts-and-the-future-of-webassembly):
-Compiling for the web, server microservices using WASM, freedom of choice of programming language, and how it will really change the landscape of technology, the fabric of our world, and might be the ultimate answer of life, the universe, and everything.
+Compiling for the web, server microservices using Wasm, freedom of choice of programming language, and how it will really change the landscape of technology, the fabric of our world, and might be the ultimate answer of life, the universe, and everything.
 
 
 
@@ -115,7 +115,7 @@ Hi! I'm Marcel and I'm the creator of the [Micrio storytelling platform](https:/
 
 As a hardcore vanilla JS dev, I started the Micrio JS client development back in 2015, pushing to find the best balance between hardware performance (60fps all the way), minimal CPU and bandwidth use (for older and mobile devices), and still deliver a sharp and high quality viewing experience.
 
-WebAssembly (WASM) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
+WebAssembly (Wasm) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
 Basically, this means you can run compiled code written in a variety of programming languages (C/C++, Rust, Go, AssemblyScript, [and many more](https://github.com/appcypher/awesome-wasm-langs)) in your browser, without any need for plugins. In its purest form, you will need some JavaScript to get it running and to communicate with the browser. For instance if you want to have a graphical output such as a game, you will need to link your program to work with available renderers, such as WebGL.
 
@@ -257,20 +257,20 @@ Wait.. "*which you can immediately call from JavaScript as if they were normal f
 
 **WebAssembly is running synchronously to JavaScript!** :exploding_head:
 
-Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would be `async`. Nope, the WASM-functions you call will return immediately!
+Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would be `async`. Nope, the Wasm-functions you call will return immediately!
 
 [*This is, like, powerful stuff*!](https://www.assemblyscript.org/exports-and-imports.html#exports)
 
-## 5.2. Bundling the compiled WASM inside the JS file
+## 5.2. Bundling the compiled Wasm inside the JS file
 
 Since I now had some extra performing hands on deck for Micrio that was very easy to integrate, I decided to include this minimal WebAssembly binary in the then-stable release of Micrio (2.9).
 
-However, I didn't want an extra HTTP request for the WASM binary every time someone loaded the Micrio JS. So I included a `base64` encoded version of the WASM-file *inside* the Micrio JS, and for browsers that support it, auto-loaded that. As a fallback, I still had the original JS-only functions in place.
+However, I didn't want an extra HTTP request for the Wasm binary every time someone loaded the Micrio JS. So I included a `base64` encoded version of the Wasm-file *inside* the Micrio JS, and for browsers that support it, auto-loaded that. As a fallback, I still had the original JS-only functions in place.
 
-![WASM as base64 embedded in JS](img/b64.png "Somehow this feels like cheating")
+![Wasm as base64 embedded in JS](img/b64.png "Somehow this feels like cheating")
 *Somehow this feels like cheating*
 
-This approach worked wonderfully. Zero weird bugs and errors, and (marginal) better performance. The Micrio 2.9-release has been running WASM for a while already!
+This approach worked wonderfully. Zero weird bugs and errors, and (marginal) better performance. The Micrio 2.9-release has been running Wasm for a while already!
 
 
 ## 5.3. The Realization
@@ -285,7 +285,7 @@ This is a small summary of my though process for the weeks that followed:
 >
 > *Can I use it for HTML marker rendering? No -- direct DOM operations are not supported.*
 >
-> *Can I use it to download the image tiles for me with higher performance? No -- WASM by itself has no download capabilities.*
+> *Can I use it to download the image tiles for me with higher performance? No -- Wasm by itself has no download capabilities.*
 >
 > *Can I replace the current Micrio schizoid Canvas2D and three.js rendering methods using one solution?*
 >
@@ -387,15 +387,15 @@ Since I was replacing modules inside the Micrio JavaScript client instead of wor
 
 Not only was this a fun thing to do, it was also a great sanity check of the entire Micrio JS architecture, seeing if there was rendering logic in places where it wasn't supposed to be.
 
-After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR WASM` comments, it was time to implement the newly created `Micrio.WASM` JavaScript module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
+After removing all last tidbits and placing the code full of `// TODO: FIX ME FOR Wasm` comments, it was time to implement the newly created `Micrio.Wasm` JavaScript module, which exposed all of the previous render functions to the rest of the client, this time handled by WebAssembly.
 
-This module acts as a 2-way street between JS and WASM and takes care of a few things:
+This module acts as a 2-way street between JS and Wasm and takes care of a few things:
 
-* Loading the WASM binary and setting up the shared memory buffer;
-* Acting as a transparent hub between JS modules and WASM;
-* Sending all required user events (mouse, key, touch) to WASM;
+* Loading the Wasm binary and setting up the shared memory buffer;
+* Acting as a transparent hub between JS modules and Wasm;
+* Sending all required user events (mouse, key, touch) to Wasm;
 * Downloading the requested tile images and linking them to WebGL as textures;
-* Controlling the main rendering loop for both WASM and JS (for correctly placing/animating HTML elements like image markers).
+* Controlling the main rendering loop for both Wasm and JS (for correctly placing/animating HTML elements like image markers).
 
 Bit by bit, over the course of a few weeks, this engine was made as a perfect fit to work together with the rest of the JS client, saving some hardly used and exotic implementations (but still used by 1% of the Micrio projects) for last.
 
@@ -425,7 +425,7 @@ After all said and done, and not quite as straightforward as described here (360
 
 # 7. Putting it to the test
 
-So, after the entire ordeal of the previous chapter, we are now left with a *testable* Micrio JS/WASM/WebGL client. Not yet ready for production, but slowly going from first steps to the full performance potential.
+So, after the entire ordeal of the previous chapter, we are now left with a *testable* Micrio JS/Wasm/WebGL client. Not yet ready for production, but slowly going from first steps to the full performance potential.
 
 The new client already *felt* a lot smoother in my browser. Zooming, panning and animating clearly went more smooth than the previous JS-only version.
 
@@ -494,7 +494,7 @@ After *a lot* of trial runs, I found out that this was not a smart thing to do. 
 
 ## 7.3. First results and subsequent runs
 
-First of all, the benchmarks were *not only* testing the JavaScript vs WebAssembly performance. A lot more had changed under the hood, for instance going from Canvas2D rendering to WebGL. These tests are by no means good comparisons for barebone JS versus WASM, but rather performance of Micrio as a whole.
+First of all, the benchmarks were *not only* testing the JavaScript vs WebAssembly performance. A lot more had changed under the hood, for instance going from Canvas2D rendering to WebGL. These tests are by no means good comparisons for barebone JS versus Wasm, but rather performance of Micrio as a whole.
 
 After the first few trial runs, while the test *looked* much smoother on my screen using Micrio 3.0, the measured results were not that impressive. Over the 2 minute measured timespan, there was only *14% less* CPU usage than with 2.9, tested over a number of trials.
 
