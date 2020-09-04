@@ -613,7 +613,7 @@ So, [like before](#52-bundling-the-compiled-wasm-inside-the-js-file), I took the
 
 ## 8.2. Keeping it light weight
 
-Since our current version uses Wasm, and since all browsers that support that [also support native ES6 JavaScript](https://caniuse.com/#search=es6) (or ECMAScript 6, the latest version of JavaScript), I knew that *for the browsers running this Micrio version*, I didn't have to compile the JS to ES5 anymore.
+Since our current version uses Wasm, and since all browsers that support that [also support native ES6 JavaScript](https://caniuse.com/#search=es6) (or ECMAScript 6, the latest version of JavaScript), I knew that *for the browsers able to run this Micrio version*, I didn't have to compile the JS to ES5 anymore.
 
 That means that the [closure compiled](https://developers.google.com/closure/compiler) JS code could use arrow functions, native promises, and much more. Resulting in a much smaller compiled codebase: turning 315KB of JS code into **170KB** of minified JavaScript.
 
@@ -634,9 +634,10 @@ Which (and I really tried), *it didn't*.
 
 This could simply be resolved including a browser warning for older, non-compatible browsers. Or, instructing that developers using Micrio in their projects should stick to the 2.9 version.
 
-Which I neither wanted to do:
+Which neither I wanted to do:
 
 * Micrio projects are often aimed at broad audiences and should be *all inclusive*-- even your grandparents still using Internet Explorer 10 should be able to enjoy the projects;
+
 * By telling developers to stick to 2.9 for older browsers, the adoption of 3.0 would take forever.
 
 
@@ -657,7 +658,7 @@ Done in a few lines of code, this works wonderfully!
 
 ### But... ES6
 
-When putting everything together (the ES6-compiled JavaScript, the Wasm base64 and the compatibility loader), **Internet Explorer refused to run the file**. Because it had unknown JavaScript syntaxes in it (ES6), it refused to parse the file and wouldn't even execute the simple backwards compatibility trick at the top.
+When putting everything together (the ES6-compiled JavaScript, the Wasm base64 and the compatibility loader), **Internet Explorer refused to run the file**. Because it had unknown JavaScript syntax (ES6) in it further on, it refused to parse the file as a whole and wouldn't even execute the simple backwards compatibility trick at the top.
 
 This was kind of a big deal. Because this meant that I would have to go back to ES5-compiled JS for 3.0, for the only reason of Internet Explorer being able to run 4 simple lines of JavaScript.
 
