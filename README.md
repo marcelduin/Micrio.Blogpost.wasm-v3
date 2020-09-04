@@ -729,11 +729,15 @@ I could now finally sleep peacefully.
 
 Bringing me to the end of this article.
 
+
 # 9.1. Results for Micrio
 
 Overall, I'm extremely satisfied with how everything turned out. Not only did I migrate Micrio to WebAssembly as much as it could benefit from it, I also took a step into the future by dropping compatibility for older browsers, while still providing an automatic fallback to 2.9.
 
 The client performance is 65% better, the JS filesize is 60% smaller, and the codebase became *a lot* cleaner, with a clear separation between AssemblyScript and JavaScript responsibilities.
+
+*What is not to like?*
+
 
 # 9.2. WebAssembly for the web
 
@@ -769,17 +773,27 @@ I don't keep up with these developments as much as I'd like to, but referencing 
 * ["Building a Containerless Future with WebAssembly"](https://www.youtube.com/watch?v=vqBtoPJoQOE&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=7) by Kevin Hoffman: could WebAssembly replace Docker as *The Cloud*? Yes! For the server side world slowly moving to cloud functions, with more atomic parts of your infrastructure running independently, WebAssembly offers superb security, portability and low overheads.
 
 
-# 9.4. Does it cure all ailments?
+# 9.4. Is it a fix-all solution?
 
-Not at the moment.
+If you are a web developer, making websites, single-page interfaces and what-not, currently WebAssembly is not (yet) a direct improvement; Nothing really needs to be fixed, because it's perfect the way it is!
 
-If you are a web developer, making HTML pages, single-page interfaces or what-not, currently WebAssembly is not (yet) a direct improvement.
+If you rely on frameworks such as React, Vue, or others to create your site in, I do think that there will be versions running WebAssembly for these in the near future (or perhaps they already exist).
 
-If you rely on frameworks such as React, Vue, or others to create your site in, I do think that there will be a WebAssembly alternative for these in the near future ()
+Looking at [Blazor Webassembly](https://devblogs.microsoft.com/aspnet/blazor-webassembly-3-2-0-now-available/), and the upcoming .NET 5, this already is a huge leap forwards for making compiled code useable as a website or interface inside your browser.
+
+# 9.5. The crystal ball
+
+Not knowing what the future looks like exactly, I *do* see WebAssembly affecting the future of the web (and the internet, and IoT..) on a large scale. For developers, there will me more degrees of freedom (and fun!) to create stuff.
+
+*The Cloud* will more and more become [The Fog](https://en.wikipedia.org/wiki/Fog_computing), having micro services all around you. WebAssembly could become an important factor in making that happen on a quicker timeline.
+
+As for now, September 2020, WebAssembly is becoming more visible for developers. I think most web developers (front-end, back-end) have at least *heard* of it. Which is already more than last year.
+
+To quote Ashley Williams, during [her talk at WebAssembly Summit](https://www.youtube.com/watch?v=J5Rs9oG3FdI&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=3) *"Why the #wasmsummit Website isn't written in Wasm"*:
+
+> "We need everybody's help, and everybody isn't here yet"
 
 
+Whatever happens, what's going on right now is unstoppable.
 
-
-
-
-# 10. Afterthoughts and the future of WebAssembly
+Unstoppable and **awesome**.
