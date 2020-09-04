@@ -74,16 +74,30 @@ In this article, some technical terms will be used. While I can't detail 100% of
 
 	5. [**Wrong assumptions**](#75-wrong-assumptions)
 
-	6. [**Be pedantic**](#76-be-pedantic)
-
-	7. [**The final test results are in**](#77-the-final-test-results-are-in)
+	7. [**The final test results are in**](#76-the-final-test-results-are-in)
 
 
 8. [**Going to production**](#8-going-to-production)
 
-9. [**Conclusions**](#9-conclusions)
+	1. [**Keeping it a single download**](#81-keeping-it-a-single-download)
 
-10. [**Afterthoughts and the future**](#10-afterthoughts-and-the-future-of-webassembly)
+	2. [**Keeping it light weight**](#82-keeping-it-light-weight)
+
+	3. [**Keeping it compatible**](#83-keeping-it-compatible)
+
+
+9. [**Concluding**](#9-concluding)
+
+	1. [**Results for Micrio**](#91-results-for-micrio)
+
+	2. [**WebAssembly for the web**](#92-webassembly-for-the-web)
+
+	3. [**WebAssembly outside the web**](#93-webassembly-outside-the-web)
+
+	4. [**Is it a fix-all solution?**](#94-is-it-a-fix-all-solution)
+
+	5. [**The crystal ball**](#95-the-crystal-ball)
+
 
 
 
@@ -562,11 +576,7 @@ Your browser is already the result of 25+ years of the biggest minds on the web 
 **Tip 5: Only fix problems that are real problems; don't waste your time by making assumptions that will fix a non-problem.**
 
 
-## 7.6. Be pedantic
-
-*Todo*
-
-## 7.7. The final test results are in
+## 7.6. The final test results are in
 
 After the optimizations, of which none could be singled out to be *the thing that fixed it all*, the numbers were looking quite differently:
 
@@ -723,11 +733,9 @@ Or, gzipped, **74KB**, which was still a **12%** profit over 2.9.
 I could now finally sleep peacefully.
 
 
-# 9. Conclusions
+# 9. Concluding
 
 *And that*, children, is how I ended up with the weird-looking, but greatly working [micrio-3.0.min.js](https://b.micr.io/micrio-3.0.min.js)!
-
-Bringing me to the end of this article.
 
 
 # 9.1. Results for Micrio
@@ -736,7 +744,7 @@ Overall, I'm extremely satisfied with how everything turned out. Not only did I 
 
 The client performance is 65% better, the JS filesize is 60% smaller, and the codebase became *a lot* cleaner, with a clear separation between AssemblyScript and JavaScript responsibilities.
 
-*What is not to like?*
+*What's not to like?*
 
 
 # 9.2. WebAssembly for the web
@@ -751,11 +759,13 @@ It is still mind blowing to me what it can do and is already doing:
 
 	* Microsoft is putting a lot of faith in it with [Blazor Webassembly](https://devblogs.microsoft.com/aspnet/blazor-webassembly-3-2-0-now-available/), letting you run your C#-created apps natively in the browser;
 
+	* There are already a few showcases [that can compile Android apps to run in your browser](https://blog.adacore.com/android-application-with-ada-and-webassembly): could this mean a merge could happen in the future?
+
 * Already [over 40 programming languages](https://github.com/appcypher/awesome-wasm-langs) can compile to WebAssembly;
 
 * Growing support for managed embedded apps for each language, shifting more and more browser logic to the coding environment. For instance, check [this PoC web shop written 100% in Rust](http://www.sheshbabu.com/posts/rust-wasm-yew-single-page-application/);
 
-* Allowing previously non-web functionality to become available in your browser, such as [Machine Learning](https://tvm.apache.org/2020/05/14/compiling-machine-learning-to-webassembly-and-webgpu) and [Blockchain applications](https://medium.com/@rauljordan/webassembly-the-future-of-blockchain-computing-1a0ae28f7e40);
+* Allowing previously non-web functionality to become available in your browser, such as [Machine Learning](https://tvm.apache.org/2020/05/14/compiling-machine-learning-to-webassembly-and-webgpu) and [Blockchain applications](https://medium.com/@rauljordan/webassembly-the-future-of-blockchain-computing-1a0ae28f7e40).
 
 
 And so incredibly much more. Check out [Made With Webassembly](https://madewithwebassembly.com/) for an ever-growing list of small to business critical environments that already use it.
@@ -775,7 +785,7 @@ I don't keep up with these developments as much as I'd like to, but referencing 
 
 # 9.4. Is it a fix-all solution?
 
-If you are a web developer, making websites, single-page interfaces and what-not, currently WebAssembly is not (yet) a direct improvement; Nothing really needs to be fixed, because it's perfect the way it is!
+If you are a web developer, making websites, single-page interfaces and what-not, WebAssembly is not (yet) a direct improvement; Nothing really needs to be fixed, because it's perfect the way it is!
 
 If you rely on frameworks such as React, Vue, or others to create your site in, I do think that there will be versions running WebAssembly for these in the near future (or perhaps they already exist).
 
@@ -791,7 +801,7 @@ As for now, September 2020, WebAssembly is becoming more visible for developers.
 
 To quote Ashley Williams, during [her talk at WebAssembly Summit](https://www.youtube.com/watch?v=J5Rs9oG3FdI&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=3) *"Why the #wasmsummit Website isn't written in Wasm"*:
 
-> "We need everybody's help, and everybody isn't here yet"
+> "We need everybody's help, and everybody isn't here yet."
 
 
 Whatever happens, what's going on right now is unstoppable.
