@@ -711,8 +711,8 @@ Leaving me with a neat JS file:
 
 * The ES5 backwards compatibility loader
 * The zlib.js include (12KB)
-* The gzipped-then-base64'd Wasm binary
-* The gzipped-then-base64'd JavaScript
+* The gzipped+base64'd Wasm binary
+* The gzipped+base64'd JavaScript
 
 Totalling... **101KB**, or **60%** smaller than the 2.9 JS bundle (250KB)! :tada:
 
