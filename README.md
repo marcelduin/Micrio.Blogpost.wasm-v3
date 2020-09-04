@@ -51,7 +51,7 @@ In this article, some technical terms will be used. While I can't detail 100% of
 
 	3. [**The Realization**](#53-the-realization)
 
-6. [**Third Rewrite: AssemblyScript &amp; WebGL**](#6-third-rewrite-assemblyscript-webgl)
+6. [**Third Rewrite: AssemblyScript &amp; WebGL**](#6-third-rewrite-assemblyscript--webgl)
 
 	1. [**Directly connecting WebAssembly's Memory to WebGL**](#61-connecting-webassemblys-memory-to-webgl)
 
