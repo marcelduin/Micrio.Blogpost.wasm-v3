@@ -685,14 +685,16 @@ One disadvantage of `base64`-ing all compiled ES6-JS code (170KB), was that it r
 
 Which was a 20% increase over Micrio 2.9.
 
-Not dramatic, but I *still* felt unsatisfied, since the smaller filesize advantage was gone due to *Internet Explorer*. I would not let it defeat me!
+Not dramatic, but I *still* felt unsatisfied, since the smaller filesize advantage was gone due to *Internet Explorer*.
+
+I would not let it defeat me!
 
 
 ### Hackity-hack ^ 2
 
 What I found, was that `gzip` does not work that well with base64-encoded strings. It compresses it, but not as much as the pre-encoded code. This was for both the Wasm binary, and the ES6 code.
 
-> *If only I could gzip them **before** base64-encoding them..*
+If only I could gzip them **before** base64-encoding them..
 
 Long story short: *I did*.
 
@@ -702,7 +704,7 @@ The bundling process for the Micrio JS now looks like this:
 * Take the closure-compiled JS, gzip it (170KB -> **55KB**), and base64-encode it
 * Add the ES5 backwards compatibility loader
 
-The only thing required now was that I should be able to *decompress* the decoded gzipped blobs inside the browser. Unfortunately there is no JS API for this, but [zlib.js](https://github.com/imaya/zlib.js), a minimal footprint JS gzipping library, does the job perfectly.
+The only thing required now was that I should be able to decompress the decoded gzipped blobs *inside the browser*. Unfortunately there is no JS API for this, but [zlib.js](https://github.com/imaya/zlib.js), a minimal footprint JS gzipping library, does the job perfectly.
 
 Leaving me with a neat JS file:
 
@@ -720,7 +722,7 @@ I could now finally sleep peacefully.
 
 # 9. Conclusions
 
-*And that*, children, is how I ended up with the weird-looking, but greatly working [https://b.micr.io/micrio-3.0.min.js](https://b.micr.io/micrio-3.0.min.js)!
+*And that*, children, is how I ended up with the weird-looking, but greatly working [micrio-3.0.min.js](https://b.micr.io/micrio-3.0.min.js)!
 
 
 
