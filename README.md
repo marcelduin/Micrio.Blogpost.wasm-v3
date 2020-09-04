@@ -753,6 +753,8 @@ Writing about such an applied subject, I don't feel I touched upon even 1% of th
 
 It is still mind blowing to me what it can do and is already doing:
 
+* Already [over 40 programming languages](https://github.com/appcypher/awesome-wasm-langs) can compile to WebAssembly;
+
 * Compiling non-traditional-web-oriented IDEs for the web:
 
 	* [Unity has a "compile to web" function](https://blogs.unity3d.com/2018/08/15/webassembly-is-here/), being able to play its games in the browser *out of the box*;
@@ -761,7 +763,11 @@ It is still mind blowing to me what it can do and is already doing:
 
 	* There are already a few showcases [that can compile Android apps to run in your browser](https://blog.adacore.com/android-application-with-ada-and-webassembly): could this mean a merge could happen in the future?
 
-* Already [over 40 programming languages](https://github.com/appcypher/awesome-wasm-langs) can compile to WebAssembly;
+* Compiling legacy stuff for the web:
+
+	* [We might see Flash coming back again!](https://medium.com/leaningtech/running-flash-in-webassembly-using-cheerpx-an-update-d500b6fbc44e);
+
+	* Running DOS, games, emulators, [you name it](https://madewithwebassembly.com/);
 
 * Growing support for managed embedded apps for each language, shifting more and more browser logic to the coding environment. For instance, check [this PoC web shop written 100% in Rust](http://www.sheshbabu.com/posts/rust-wasm-yew-single-page-application/);
 
@@ -769,6 +775,7 @@ It is still mind blowing to me what it can do and is already doing:
 
 
 And so incredibly much more. Check out [Made With Webassembly](https://madewithwebassembly.com/) for an ever-growing list of small to business critical environments that already use it.
+
 
 ## 9.3. WebAssembly outside the web
 
@@ -791,6 +798,7 @@ If you rely on frameworks such as React, Vue, or others to create your site in, 
 
 Looking at [Blazor Webassembly](https://devblogs.microsoft.com/aspnet/blazor-webassembly-3-2-0-now-available/), and the upcoming .NET 5, this already is a huge leap forwards for making compiled code useable as a website or interface inside your browser.
 
+
 ## 9.5. The crystal ball
 
 Not knowing what the future looks like exactly, I *do* see WebAssembly affecting the future of the web (and the internet, and IoT..) on a large scale. For developers, there will me more degrees of freedom (and fun!) to create stuff.
@@ -799,10 +807,9 @@ Not knowing what the future looks like exactly, I *do* see WebAssembly affecting
 
 As for now, September 2020, WebAssembly is becoming more visible for developers. I think most web developers (front-end, back-end) have at least *heard* of it. Which is already more than last year.
 
-To quote Ashley Williams, during [her talk at WebAssembly Summit](https://www.youtube.com/watch?v=J5Rs9oG3FdI&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=3) *"Why the #wasmsummit Website isn't written in Wasm"*:
+To quote [Russ Cox](https://ashleygwilliams.github.io/nodetogether-keynote/#1), quoted by Ashley Williams during her talk at WebAssembly Summit [*"Why the #wasmsummit Website isn't written in Wasm"*](https://www.youtube.com/watch?v=J5Rs9oG3FdI&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=3):
 
-> "We need everybody's help, and everybody isn't here yet."
-
+> "We need everyone's help, and everyone isn't here yet."
 
 Whatever happens, what's going on right now is unstoppable.
 
