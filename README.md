@@ -727,6 +727,59 @@ I could now finally sleep peacefully.
 
 *And that*, children, is how I ended up with the weird-looking, but greatly working [micrio-3.0.min.js](https://b.micr.io/micrio-3.0.min.js)!
 
+Bringing me to the end of this article.
+
+# 9.1. Results for Micrio
+
+Overall, I'm extremely satisfied with how everything turned out. Not only did I migrate Micrio to WebAssembly as much as it could benefit from it, I also took a step into the future by dropping compatibility for older browsers, while still providing an automatic fallback to 2.9.
+
+The client performance is 65% better, the JS filesize is 60% smaller, and the codebase became *a lot* cleaner, with a clear separation between AssemblyScript and JavaScript responsibilities.
+
+# 9.2. WebAssembly for the web
+
+Writing about such an applied subject, I don't feel I touched upon even 1% of the potential of WebAssembly in this article.
+
+It is still mind blowing to me what it can do and is already doing:
+
+* Compiling non-traditional-web-oriented IDEs for the web:
+
+	* [Unity has a "compile to web" function](https://blogs.unity3d.com/2018/08/15/webassembly-is-here/), being able to play its games in the browser *out of the box*;
+
+	* Microsoft is putting a lot of faith in it with [Blazor Webassembly](https://devblogs.microsoft.com/aspnet/blazor-webassembly-3-2-0-now-available/), letting you run your C#-created apps natively in the browser;
+
+* Already [over 40 programming languages](https://github.com/appcypher/awesome-wasm-langs) can compile to WebAssembly;
+
+* Growing support for managed embedded apps for each language, shifting more and more browser logic to the coding environment. For instance, check [this PoC web shop written 100% in Rust](http://www.sheshbabu.com/posts/rust-wasm-yew-single-page-application/);
+
+* Allowing previously non-web functionality to become available in your browser, such as [Machine Learning](https://tvm.apache.org/2020/05/14/compiling-machine-learning-to-webassembly-and-webgpu) and [Blockchain applications](https://medium.com/@rauljordan/webassembly-the-future-of-blockchain-computing-1a0ae28f7e40);
+
+
+And so incredibly much more. Check out [Made With Webassembly](https://madewithwebassembly.com/) for an ever-growing list of small to business critical environments that already use it.
+
+# 9.3. WebAssembly outside the web
+
+This is something that was perhaps the most mindblowing thing for me to realize.
+
+Because of WebAssembly's philosophy of compiling to an atomic binary that runs in a secure sandbox, WebAssembly is also very interesting to use *outside the browser*.
+
+I don't keep up with these developments as much as I'd like to, but referencing some talks from the WebAssembly summit early 2020:
+
+* ["WebAssembly and the Internet of Things"](https://www.youtube.com/watch?v=oky3FdsTuUM&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=6) by Jonathan Beri: running your language-agnostic WebAssembly on your IoT hardware with as little as 512KB RAM;
+
+* ["Building a Containerless Future with WebAssembly"](https://www.youtube.com/watch?v=vqBtoPJoQOE&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=7) by Kevin Hoffman: could WebAssembly replace Docker as *The Cloud*? Yes! For the server side world slowly moving to cloud functions, with more atomic parts of your infrastructure running independently, WebAssembly offers superb security, portability and low overheads.
+
+
+# 9.4. Does it cure all ailments?
+
+Not at the moment.
+
+If you are a web developer, making HTML pages, single-page interfaces or what-not, currently WebAssembly is not (yet) a direct improvement.
+
+If you rely on frameworks such as React, Vue, or others to create your site in, I do think that there will be a WebAssembly alternative for these in the near future ()
+
+
+
+
 
 
 # 10. Afterthoughts and the future of WebAssembly
