@@ -658,9 +658,11 @@ Done in a few lines of code, this works wonderfully!
 
 ### But... ES6
 
-When putting everything together (the ES6-compiled JavaScript, the Wasm base64 and the compatibility loader), **Internet Explorer refused to run the file**. Because it had unknown JavaScript syntax (ES6) in it further on, it refused to parse the file as a whole and wouldn't even execute the simple backwards compatibility trick at the top.
+When putting everything together (the ES6-compiled JavaScript, the Wasm base64 and the compatibility loader), **Internet Explorer refused to run the file**.
 
-This was kind of a big deal. Because this meant that I would have to go back to ES5-compiled JS for 3.0, for the only reason of Internet Explorer being able to run 4 simple lines of JavaScript.
+Because it had unknown JavaScript syntax (ES6) in it further on, it refused to parse the file as a whole and wouldn't even execute the simple backwards compatibility trick at the top.
+
+This was kind of a big deal. Because this meant that I would have to go back to ES5-compiled JS for 3.0, only for Internet Explorer being able to run 4 simple lines of JavaScript.
 
 Bummer!
 
@@ -669,7 +671,7 @@ Bummer!
 
 ..*Did I mention before that I base64-encoded the Wasm binary, so I could bundle it inside the main JS file?*
 
-Instead of giving in to having to compile the brand new and shiny Micrio code to ES5, I decided to **take the ES6-compiled code, base64 encode that *too*, and put *that* in the Micrio JS bundle**, so there wouldn't be any ES6 syntaxes inside the JS.
+Instead of giving in to having to compile the brand new and shiny Micrio code to ES5, I decided to **take the ES6-compiled code, base64 encode that *too*, and put *that* in the Micrio JS bundle**, so there wouldn't be any ES6 syntax inside the JS directly.
 
 * **Yes**, it's super ugly.
 * **Yes**, it's not developer-friendly.
