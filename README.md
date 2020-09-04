@@ -592,8 +592,10 @@ Now that we have our new Micrio running great in the garage, we need to make it 
 There are a few important constraints for the production version of the Micrio JS file:
 
 * It needs to be **a single download**: The downloaded JS file should be the *entire runtime*; there shouldn't be an extra HTTP request for the Wasm binary. This would be a lot more hassle for developers, as it immediately loses its stand-alone properties;
-* It needs to be **light-weight**: Micrio is a JS library often included in external web projects, and should not affect any download times;
-* It needs to **load and work on *all* browsers**: The responsibility of *loading Micrio* should be mine, *not the developer's or the client's*. It cannot be the responsibility of the developer to do browser detection and Micrio version selection based on that.
+
+* It needs to be **light weight**: Micrio is a JS library often included in external web projects, and should not affect any download times;
+
+* It needs to **load and work on *all* browsers**: It cannot be the responsibility of the developer to do browser detection and Micrio version selection based on that.
 
 
 
@@ -601,7 +603,7 @@ There are a few important constraints for the production version of the Micrio J
 
 Older Micrio versions required the developer to include 2 files, the Micrio JavaScript and CSS (for the default layout, markers, popups, etc), seperately. I never really liked that, since both had their own version number (ie. `micrio-1.9.min.js` and `micrio-1.9.min.css`), and were both a separate HTTP request.
 
-So for version 2.0, I embedded the CSS into the JS, making it one single package containing everything it needs. This works great.
+So for version 2.0, I embedded the CSS into the JS, making it one single package containing everything it needs. This worked great.
 
 I wanted to do the same with the Wasm binary to prevent any second HTTP request and the extra disadvantage that Micrio could not work independently without an internet connection.
 
@@ -609,7 +611,7 @@ So, [like before](#52-bundling-the-compiled-wasm-inside-the-js-file), I took the
 
 
 
-## 8.2. Keeping it light-weight
+## 8.2. Keeping it light weight
 
 Since our current version uses Wasm, and since all browsers that support that [also support native ES6 JavaScript](https://caniuse.com/#search=es6) (or ECMAScript 6, the latest version of JavaScript), I knew that *for the browsers running this Micrio version*, I didn't have to compile the JS to ES5 anymore.
 
@@ -617,7 +619,7 @@ That means that the [closure compiled](https://developers.google.com/closure/com
 
 Adding to that our 42KB of base64-encoded Wasm binary, we are left with a bundled, fully working, ES6 executable Micrio JS of **212KB**.
 
-Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#73-first-results-and-subsequent-runs)) about a 15% decrease of filesize. Also, since the hosted Micrio JS is delivered using `gzip` compression, the resulting *download sizes* were also improved: **73KB** for Micrio 3.0 vs **84KB** vs 2.9!
+Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#73-first-results-and-subsequent-runs)) about a 15% decrease of filesize. Also, since the hosted Micrio JS is delivered using `gzip` compression, the resulting download sizes were also improved: **73KB** for Micrio 3.0 vs **84KB** vs 2.9!
 
 
 ## 8.3. Keeping it compatible
@@ -626,9 +628,11 @@ This is where it gets interesting.
 
 Since one of my requirements is that the newly created Micrio 3.0 library can run in **any** (previously compatible) browser, this means that even *Internet Eplorer 10* should be able to run the JS.
 
-Which, and I really tried, *it didn't*. :surprised-pikachu-face:
+Which (and I really tried), *it didn't*.
 
-This could simply be resolved including a browser warning for older, non-compatible browsers. Or, that the developers using Micrio in their projects should stick to the 2.9 version.
+![Surprised pikachu face](img/pikachu.jpg)
+
+This could simply be resolved including a browser warning for older, non-compatible browsers. Or, instructing that developers using Micrio in their projects should stick to the 2.9 version.
 
 Which I neither wanted to do:
 
@@ -662,13 +666,13 @@ Bummer!
 
 ### Hackity-hack
 
-..Did I mention before that I base64-encoded the Wasm binary, so I could bundle it inside the main JS file?
+..*Did I mention before that I base64-encoded the Wasm binary, so I could bundle it inside the main JS file?*
 
 Instead of giving in to having to compile the brand new and shiny Micrio code to ES5, I decided to **take the ES6-compiled code, base64 encode that *too*, and put *that* in the Micrio JS bundle**, so there wouldn't be any ES6 syntaxes inside the JS.
 
-Yes, it's super ugly.
-Yes, it's not developer-friendly.
-Yes, it made the file size larger by a lot.
+* **Yes**, it's super ugly.
+* **Yes**, it's not developer-friendly.
+* **Yes**, it made the file size larger by a lot.
 
 But most importantly, *it worked*! For Internet Explorer, the 4 lines of code to switch the 3.0 JS to 2.9 would run, and for all others, the ES6 code was decoded, and run using `new Function({the decoded ES6 inside a function string})`.
 
@@ -686,9 +690,9 @@ Not dramatic, but I *still* felt unsatisfied, since the smaller filesize advanta
 
 ### Hackity-hack ^ 2
 
-What I found, was that `gzip` does not work that well with base64-encoded strings. It compresses it, but not as much as the raw code. This was for both the Wasm binary, and the ES6 code.
+What I found, was that `gzip` does not work that well with base64-encoded strings. It compresses it, but not as much as the pre-encoded code. This was for both the Wasm binary, and the ES6 code.
 
-*If only I could gzip them **before** base64-encoding them..*
+> *If only I could gzip them **before** base64-encoding them..*
 
 Long story short: *I did*.
 
@@ -698,7 +702,7 @@ The bundling process for the Micrio JS now looks like this:
 * Take the closure-compiled JS, gzip it (170KB -> **55KB**), and base64-encode it
 * Add the ES5 backwards compatibility loader
 
-The only thing required now was that I should be able to *decompress* the decoded gzipped blobs inside the browser. Unfortunately there is no JS API for this, but [zlib.js](https://github.com/imaya/zlib.js), a minimal footprint JS gzipping library, did the job perfectly.
+The only thing required now was that I should be able to *decompress* the decoded gzipped blobs inside the browser. Unfortunately there is no JS API for this, but [zlib.js](https://github.com/imaya/zlib.js), a minimal footprint JS gzipping library, does the job perfectly.
 
 Leaving me with a neat JS file:
 
@@ -707,7 +711,7 @@ Leaving me with a neat JS file:
 * The gzipped-then-base64'd Wasm binary
 * The gzipped-then-base64'd JavaScript
 
-Totalling... **101KB**, or **60%** smaller than the 2.9 JS bundle! :tada:
+Totalling... **101KB**, or **60%** smaller than the 2.9 JS bundle (250KB)! :tada:
 
 Or, gzipped, **74KB**, which was still a **12%** profit over 2.9.
 
