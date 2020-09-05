@@ -300,7 +300,7 @@ So kind of like the C++ emscripten implementation, but this time using the lean 
 This iteration, I used what I've learned in my previous two iterations:
 
 1. **It's possible to have the entire rendering logic inside WebAssembly**
-2. **It's possible to combine JS en WebAssembly fluently**
+2. **It's possible to combine JS and WebAssembly fluently**
 
 Back to the drawing board. What I was going to make was a single WebGL renderer, used for both the 2D and 360&deg; Micrio images, so I could do away with the Canvas2D and three.js implementations, not only (hopefully) improving performance, but being able to throw away *a lot* of JS code and do away with the three.js dependency.
 
@@ -558,7 +558,7 @@ This is what caused earlier Micrio versions a lot of janks and frameskips. The s
 2. Check if I need to request another frame (based on whether all required tiles are loaded, or there is a camera animation running);
 3. If a new frame is required, request one and `GOTO 1`.
 
-This makes total sense-- you don't want to have an ever-running animation loop when there's no updates to draw. But also, you don't want to do the *actual drawing on your screen* before requesting your next frame, since that takes a few valuable milliseconds extra.
+This makes total sense-- you don't want to have an ever-running animation loop when there are no updates to draw. But also, you don't want to do the *actual drawing on your screen* before requesting your next frame, since that takes a few valuable milliseconds extra.
 
 So in WebAssembly, I made a `.shouldRequest()` function, which firstly did the pre-work required for the rendering, returning a `true` or `false` for whether JavaScript should ask for a next frame or not.
 
@@ -611,7 +611,7 @@ There are a few important constraints for the production version of the Micrio J
 
 ## 8.1. Keeping it a single download
 
-Older Micrio versions required the developer to include 2 files, the Micrio JavaScript and CSS (for the default layout, markers, popups, etc), seperately. I never really liked that, since both had their own version number (ie. `micrio-1.9.min.js` and `micrio-1.9.min.css`), and were both a separate HTTP request.
+Older Micrio versions required the developer to include 2 files, the Micrio JavaScript and CSS (for the default layout, markers, popups, etc), separately. I never really liked that, since both had their own version number (ie. `micrio-1.9.min.js` and `micrio-1.9.min.css`), and were both a separate HTTP request.
 
 So for version 2.0, I embedded the CSS into the JS, making it one single package containing everything it needs. This worked great.
 
