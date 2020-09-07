@@ -177,7 +177,7 @@ As incredibly awesome it was to see Micrio in C++ running smoothly in my browser
 
 
 ### 1. Coding C++ felt old-fashioned
-Writing C++ felt like going back in time. Incredibly powerful and fully proven, but also archaic, especially as a web developer. I spent more time fiddling with making an optimized `Makefile` than I care to admit.
+Writing C++ felt like going back in time. Incredibly powerful and fully proven, but also archaic, especially for me as a web developer. I spent more time fiddling with making an optimized `Makefile` than I care to admit.
 
 ![The emscripten C++ Makefile](img/makefile.png "( ͡° ͜ʖ ͡°)")
 
