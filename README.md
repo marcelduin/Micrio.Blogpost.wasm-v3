@@ -568,14 +568,14 @@ As a final optimization step, I decided to see how much I could optimize the [As
 One option however stood out to me:
 
 ```
--- pedantic        Make yourself sad for no good reason.
+--pedantic        Make yourself sad for no good reason.
 ```
 
 This option will show all the nitty gritty compiler warnings, going from 0 to 100+ after turning this on. I firstly decided to ignore this, but instead of hiding my sadness, I took it upon myself to face them head-on.
 
 Two things I learned from this:
 
-1. If you're using arrays with indexed access (like `array[5]`) inside AssemblyScript, there will be bounds checking to see if there are no overflows, decreasing performance. Using [`unchecked(array[5])`](https://www.assemblyscript.org/memory.html#notes) will fix this problem, and makes the compiler trust the indexes you provide. The code will look really weird, but it works;
+1. If you're using arrays with indexed access (like `array[5]`) inside AssemblyScript, there will be bounds checking to see if there are no overflows, decreasing performance. Using [`unchecked(array[5])`](https://www.assemblyscript.org/memory.html#notes) will fix this problem, and makes the compiler trust the indices you provide. The code will look really weird, but it works;
 
 2. AssemblyScript doesn't handle circular references optimally. For instance, it makes sense to have a `Micrio.Camera` object, where the `Camera` also has a `Camera.Micrio` object, so it can refer to its own main image. Pedantic AssemblyScript warns about this, as it cannot compile optimally (which makes sense). So, for all functions requiring another class instance like `Micrio`, I just pass it as the first function argument. It's a whole different way of thinking, but keeps your classes fundamentally separated.
 
