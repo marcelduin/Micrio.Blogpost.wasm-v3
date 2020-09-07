@@ -741,7 +741,7 @@ For the Micrio implementaton, not a lot. I've offloaded the rendering as much as
 
 * *Any HTML operation would still require a JS render function*, and the browser's HTML rendering pipeline would not change at all. It would actually be adding an extra step.
 
-* *The Wasm program would lose its static memory size*: since now all it does is rendering the image, the required memory buffers are generated at runtime, and do not grow over time. When I would add markers and HTML logic, which can be dynamically added and removed, meaning that the reserved memory size would potentially be expanded during runtime, adding more rebinding logic to it.
+* *The Wasm program would lose its static memory size*: since now all it does is rendering the image, the required memory buffers are generated at runtime, and do not grow over time. When I would add markers and additional logic, which can be dynamically added and removed, the reserved memory size would potentially be expanded during runtime, adding more rebinding logic to it.
 
 
 As for Wasm functionality, I've used only the basics since Micrio is quite simple. For more advanced features like multithreading and being able to use reference types, check out the [WebAssembly roadmap](https://webassembly.org/roadmap/), as Wasm is still nowhere from being finished.
