@@ -205,7 +205,7 @@ Fast forward a few months, to just after the [WebAssembly Summit](https://webass
 
 During the WebAssembly conference, I was very impressed by a [synth demo](https://www.youtube.com/watch?v=C8j_ieOm4vE) written in **[AssemblyScript](https://www.assemblyscript.org/)**, a language created specifically for WebAssembly, using the TypeScript syntax. Basically you can write (near) TypeScript, which compiles to a `.wasm`-binary. So anyone familiar with either TypeScript or JavaScript ES6 will not have a lot of difficulties using it.
 
-And the great thing-- it's all installed using `npm`, so getting it up and running and compiling your program is super easy!
+And the great thing-- it's all installed using `npm`, so [getting it up and running](https://www.assemblyscript.org/quick-start.html) and compiling your program is super easy!
 
 There are a few basic [`types` added in AssemblyScript](https://www.assemblyscript.org/types.html), which are required for compile-time optimizations:
 
