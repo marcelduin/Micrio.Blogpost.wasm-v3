@@ -612,6 +612,8 @@ Adding to that our 42KB of base64-encoded Wasm binary, we are left with a bundle
 
 Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#73-first-results-and-subsequent-runs)) about a 15% decrease of filesize. Also, since the hosted Micrio JS is delivered using `gzip` compression, the resulting download sizes were also improved: **73KB** for Micrio 3.0 vs **84KB** vs 2.9!
 
+(*Why am I not using [`brotli`](https://github.com/google/brotli) for compression? Because Internet Explorer 10/11 don't support it, and I cannot dynamically serve different compressions since the Micrio JS is hosted on a static server.*)
+
 
 ## 8.3. Keeping it compatible
 
