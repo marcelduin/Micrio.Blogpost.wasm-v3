@@ -71,13 +71,15 @@ This article will be the epic tale of my discovery of WebAssembly, and the journ
 
 	1. [**Results for Micrio**](#91-results-for-micrio)
 
-	2. [**WebAssembly for the web**](#92-webassembly-for-the-web)
+	2. [**What's missing?**](#92-whats-missing)
 
-	3. [**WebAssembly outside the web**](#93-webassembly-outside-the-web)
+	3. [**WebAssembly for the web**](#93-webassembly-for-the-web)
 
-	4. [**Is it a fix-all solution?**](#94-is-it-a-fix-all-solution)
+	4. [**WebAssembly outside the web**](#94-webassembly-outside-the-web)
 
-	5. [**The crystal ball**](#95-the-crystal-ball)
+	5. [**Is it a fix-all solution?**](#95-is-it-a-fix-all-solution)
+
+	6. [**The crystal ball**](#96-the-crystal-ball)
 
 
 
@@ -730,7 +732,34 @@ The client performance is 65% better, the JS filesize is 60% smaller, and the co
 *What's not to like?*
 
 
-## 9.2. WebAssembly for the web
+
+## 9.2. What's missing?
+
+This is a tough question. What would I like to see differently?
+
+For the Micrio implementaton, not a lot. I've offloaded the rendering as much as possible to Wasm. Micrio also has a lot of other logic (HTML markers, popups, using the Audio API..), but putting those in Wasm as well would not be benificial for a number of reasons:
+
+* *Any HTML operation would still require a JS render function*, and the browser's HTML rendering pipeline would not change at all. It would actually be adding an extra step.
+
+* *The Wasm program would lose its static memory size*: since now all it does is rendering the image, the required memory buffers are generated at runtime, and do not grow over time. When I would add markers and HTML logic, which can be dynamically added and removed, meaning that the reserved memory size would potentially be expanded during runtime, adding more rebinding logic to it.
+
+
+As for Wasm functionality, I've used only the basics since Micrio is quite simple. For more advanced features like multithreading and being able to use reference types, check out the [WebAssembly roadmap](https://webassembly.org/roadmap/), as Wasm is still nowhere from being finished.
+
+
+However, what I *would* like to see, is a *single, binary executable download* (`.ewasm`?), which would already includes the JS glue file, being able to be run by the browser. It would have several advantages:
+
+* A single HTTP request for a single, fully autonomous package;
+* I wouldn't have to do the `base64` hacks [described above](#83-keeping-it-compatible);
+* It would maximally profit from `gzip` (or `brotli`) compression.
+
+But, that's only really nice to have.
+
+What I *am* suprised about, is that browsers don't have a native `gzip` API: since it's perfectly able to do it on the fly for downloading resources, it would make my JS another 12KB lighter.
+
+
+
+## 9.3. WebAssembly for the web
 
 Writing about such an applied subject, I don't feel I touched upon even 1% of the potential of WebAssembly in this article.
 
@@ -760,7 +789,7 @@ It is still mind blowing to me what it can do and is already doing:
 And so incredibly much more. Check out [Made With Webassembly](https://madewithwebassembly.com/) for an ever-growing list of small to business critical environments that already use it.
 
 
-## 9.3. WebAssembly outside the web
+## 9.4. WebAssembly outside the web
 
 This is something that was perhaps the most mindblowing thing for me to realize.
 
@@ -773,7 +802,7 @@ I don't keep up with these developments as much as I'd like to, but referencing 
 * ["Building a Containerless Future with WebAssembly"](https://www.youtube.com/watch?v=vqBtoPJoQOE&list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&index=7) by Kevin Hoffman: could WebAssembly replace Docker as *The Cloud*? Yes! For the server side world slowly moving to cloud functions, with more atomic parts of your infrastructure running independently, WebAssembly offers superb security, portability and low overheads.
 
 
-## 9.4. Is it a fix-all solution?
+## 9.5. Is it a fix-all solution?
 
 If you are a web developer, making websites, single-page interfaces and what-not, WebAssembly is not (yet) a direct improvement; Nothing really needs to be fixed, because it's perfect the way it is!
 
@@ -782,7 +811,7 @@ If you rely on frameworks such as React, Vue, or others to create your site in, 
 Looking at [Blazor Webassembly](https://devblogs.microsoft.com/aspnet/blazor-webassembly-3-2-0-now-available/), and the upcoming .NET 5, this already is a huge leap forwards for making compiled code useable as a website or interface inside your browser.
 
 
-## 9.5. The crystal ball
+## 9.6. The crystal ball
 
 Not knowing what the future looks like exactly, I *do* see WebAssembly affecting the future of the web (and the internet, and IoT..) on a large scale. For developers, there will me more degrees of freedom (and fun!) to create stuff.
 
