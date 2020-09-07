@@ -55,7 +55,9 @@ This article will be the epic tale of my discovery of WebAssembly, and the journ
 
 	5. [**Wrong assumptions**](#75-wrong-assumptions)
 
-	7. [**The final test results are in**](#76-the-final-test-results-are-in)
+	6. [**Be pedantic**](#76-be-pedantic)
+
+	7. [**The final test results are in**](#77-the-final-test-results-are-in)
 
 
 8. [**Going to production**](#8-going-to-production)
@@ -559,7 +561,26 @@ Your browser is already the result of 25+ years of the biggest minds on the web 
 **Tip 5: Only fix problems that are real problems; don't waste your time by making assumptions that will fix a non-problem.**
 
 
-## 7.6. The final test results are in
+## 7.6. Be pedantic
+
+As a final optimization step, I decided to see how much I could optimize the [AssemblyScript compiler](https://www.assemblyscript.org/compiler.html#command-line-options). As it turns out, there were quite a few things I could influence; like turning off the not-needed bundled runtime, and the C++-like `-O3z` to get the smallest binary possible.
+
+One option however stood out to me:
+
+```
+-- pedantic        Make yourself sad for no good reason.
+```
+
+This option will show all the nitty gritty compiler warnings, going from 0 to 100+ after turning this on. I firstly decided to ignore this, but instead of hiding my sadness, I took it upon myself to face them head-on.
+
+Two things I learned from this:
+
+1. If you're using arrays with indexed access (like `array[5]`) inside AssemblyScript, there will be bounds checking to see if there are no overflows, decreasing performance. Using [`unchecked(array[5])`](https://www.assemblyscript.org/memory.html#notes) will fix this problem, and makes the compiler trust the indexes you provide. The code will look really weird, but it works;
+
+2. AssemblyScript doesn't handle circular references optimally. For instance, it makes sense to have a `Micrio.Camera` object, where the `Camera` also has a `Camera.Micrio` object, so it can refer to its own main image. Pedantic AssemblyScript warns about this, as it cannot compile optimally (which makes sense). So, for all functions requiring another class instance like `Micrio`, I just pass it as the first function argument. It's a whole different way of thinking, but keeps your classes fundamentally separated.
+
+
+## 7.7. The final test results are in
 
 After the optimizations, of which none could be singled out to be *the thing that fixed it all*, the numbers were looking quite differently:
 
@@ -737,7 +758,7 @@ The client performance is 65% better, the JS filesize is 60% smaller, and the co
 
 This is a tough question. What would I like to see differently?
 
-For the Micrio implementaton, not a lot. I've offloaded the rendering as much as possible to Wasm. Micrio also has a lot of other logic (HTML markers, popups, using the Audio API..), but putting those in Wasm as well would not be benificial for a number of reasons:
+For the Micrio implementation, not a lot. I've offloaded the rendering as much as possible to Wasm. Micrio also has a lot of other logic (HTML markers, popups, using the Audio API..), but putting those in Wasm as well would not be benificial for a number of reasons:
 
 * *Any HTML operation would still require a JS render function*, and the browser's HTML rendering pipeline would not change at all. It would actually be adding an extra step.
 
