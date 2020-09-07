@@ -11,25 +11,6 @@
 This article will be the epic tale of my discovery of WebAssembly, and the journey of migrating the current 2.9 Micrio version written in plain JavaScript to WebAssembly as much as possible.
 
 
-# Terms used
-
-In this article, some technical terms will be used. While I can't detail 100% of them, here is a summary of the most important ones:
-
-* **JavaScript** (JS): A programming language that your browser understands. It powers most of the interactive web;
-
-* **TypeScript**: A language built on top of JavaScript, to make the life of web developers easier;
-
-* **WebGL**: [**WebGL**](https://en.wikipedia.org/wiki/WebGL) is a browser technology for being able to draw 3D graphics in your web browser. It uses the same underlying tech as a lot of 3D games use, directly utilizing your GPU instead of CPU;
-
-* **three.js**: [**three.js**](https://threejs.org) is an open source JavaScript library, that gives developers a high level code API to create 3D graphics in JavaScript, using WebGL for rendering;
-
-* **Canvas2D**: Next to WebGL, [**Canvas2D**](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) is a browser drawing technique for drawing flat, 2D graphics;
-
-* **Tiles**: A **tile** is a very small piece of a zoomable image used in [Micrio](https://micr.io). It is how Micrio works: it *streams* a very large image to the viewer's browser by looking at which parts of the main image the user is looking at, and only downloading and showing those. One of those parts is called a **tile**;
-
-* **Array**: An **array** is nothing but a list of something, used in programming. In this article, all mentions of *arrays* are long, *very long* lists of numbers, like vector coordinates.
-
-
 
 # Table of Contents
 
@@ -121,7 +102,7 @@ It has been my drive to keep optimizing Micrio since 2015. The latest stable JS 
 
 For Micrio, it is **vital** that the performance on the client's browser is as good as possible. The reason for this is very simple: when you are being told a story, or watching a movie, even *a single frameskip* immediately takes you out of your experience.
 
-Because Micrio is being used for an [ever growing list](https://micr.io/showases) of awesome projects, the most important thing is to make sure that for whoever visits a Micrio project, **it must work, and work well**.
+Because Micrio is being used for an [ever growing list](https://micr.io/showcases) of awesome projects, the most important thing is to make sure that for whoever visits a Micrio project, **it must work, and work well**.
 
 So also keeping compatibility is hugely important: I don't want to show the user a "**your browser is not supported**" warning, while still keeping up with the latest tech. This balance is hard to find and having to keep compatibility with older tech is sometimes frustrating. Nonetheless, the library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
 
