@@ -642,7 +642,7 @@ Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#73-first-r
 
 This is where it gets interesting.
 
-Since one of my requirements is that the newly created Micrio 3.0 library can run in **any** (previously compatible) browser, this means that even *Internet Eplorer 10* should be able to run the JS.
+Since one of my requirements is that the newly created Micrio 3.0 library can run in **any** (previously compatible) browser, this means that even *Internet Explorer 10* should be able to run the JS.
 
 Which (and I really tried), *it didn't*.
 
@@ -768,7 +768,7 @@ For the Micrio implementation, not a lot. I've offloaded the rendering as much a
 As for Wasm functionality, I've used only the basics since Micrio is quite simple. For more advanced features like multithreading and being able to use reference types, check out the [WebAssembly roadmap](https://webassembly.org/roadmap/), as Wasm is still under heavy active development.
 
 
-However, what I *would* like to see, is a *single, binary executable download* (`.ewasm`?), which would already includes the JS glue file, being able to be run by the browser. It would have several advantages:
+However, what I *would* like to see, is a *single, binary executable download* (`.ewasm`?), which would already include the JS glue file, being able to be run by the browser. It would have several advantages:
 
 * A single HTTP request for a single, fully autonomous package;
 * I wouldn't have to do the `base64` hacks [described above](#83-keeping-it-compatible);
