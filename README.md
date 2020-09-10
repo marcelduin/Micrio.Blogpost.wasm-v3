@@ -78,7 +78,7 @@ This article describes my journey from upgrading the Micrio **JavaScript-only cl
 
 
 
-# 1.1. Version 2.9
+## 1.1. Version 2.9
 
 The latest JS-only revision of Micrio is [version 2.9](https://b.micr.io/micrio-2.9.min.js). This library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
 
@@ -93,7 +93,7 @@ And, perhaps, this could also mark the setup for a new major version, where I wi
 
 
 
-# 2. First Rewrite: C++ and emscripten
+## 2. First Rewrite: C++ and emscripten
 
 As a first step into the world of WebAssembly, getting to know the ecosystem, I started to play around with [emscripten](https://emscripten.org/). With it, you can take almost any project made in C or C++, and compile it to a binary `.wasm` file that your browser can natively run. 
 
@@ -196,25 +196,11 @@ This approach worked wonderfully. Zero weird bugs and errors, and (marginal) bet
 
 ## 3.3. The Realization
 
-Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and three.js/WebGL for 360&deg; images) was still 100% JavaScript.
+Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all schizoid rendering logic (Canvas2D for flat images and three.js/WebGL for 360&deg; images) was still 100% JavaScript.
 
-A small summary of my thought process for the weeks that followed:
+I felt like I could get more out of this, but I didn't immediately know *how*. In the next 2 weeks, going to bed and waking up with the question, I came up with the idea:
 
-> "*Great. But there **has** to be more I can do with it!*"
->
-> "*Can I use it for HTML marker rendering? No -- direct DOM operations are not supported.*"
->
-> "*Can I use it to download the image tiles for me with higher performance? No -- Wasm by itself has no download capabilities.*"
->
-> "*Can I replace the current Micrio schizoid Canvas2D and three.js rendering methods using one solution?*"
->
-> Followed by a 2-week long "*Hmmmm...*"
-
-Yes; yes I could! What if I created my own WebGL renderer, that supports both 2D and 360&deg;?
-
-What is WebGL under the hood? To put it oversimplified: it takes a bunch of coordinate arrays and textures and draws them on your screen using [shaders](https://en.wikipedia.org/wiki/Shader). These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
-
-**What if I moved the entire rendering logic to AssemblyScript?**
+**What if I moved the entire rendering logic to AssemblyScript, using WebGL for the graphical output?**
 
 So kind of like the C++ emscripten implementation, but this time using the lean WebAssembly approach: only replacing parts of my JavaScript, maintaining Micrio's own event handlers and module (markers, tours, audio) logic.
 
@@ -243,7 +229,9 @@ As the developer, you are **100%** in control of this memory. Micrio is an excel
 
 The cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object.
 
-So... if WebAssembly can create an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and texture coordinate buffers!
+What is WebGL under the hood? To put it oversimplified: it takes a bunch of coordinate `Float32Arrays` and textures, and draws them on your screen using [shaders](https://en.wikipedia.org/wiki/Shader). These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
+
+So... if WebAssembly can create an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL for its geometry and texture coordinate buffers!
 
 That means that the output of WebAssembly is **directly connected** to WebGL's input by JavaScript *just once*, at initialization.
 
