@@ -1,5 +1,7 @@
-# Micrio v3: The Road From JavaScript To WebAssembly &amp; WebGL using AssemblyScript
-## From JavaScript (Canvas2D &amp; three.js/WebGL) to AssemblyScript + WebGL in 3 iterations
+# Going From JavaScript To WebAssembly In Three Steps
+### Or: How You Could Do It In One
+
+## A Journey From Canvas2D &amp; three.js/WebGL To AssemblyScript &amp; WebGL in 3 iterations
 
 
 # Abstract
@@ -9,6 +11,11 @@
 [Micrio](https://micr.io) is a storytelling platform based around a high performance JavaScript library, allowing users to view and navigate ultra resolution images in a matter of milliseconds, as smoothly as possible. I created this platform and have been working on optimizing the client performance since 2015.
 
 This article will be the epic tale of my discovery of WebAssembly, and the journey of migrating the current 2.9 Micrio version written in plain JavaScript to WebAssembly as much as possible.
+
+
+### Acknowledgements
+
+Thank you, Jiri, Maurice, Mathijs, Roelf-Jan &amp; Joost for your feedback and proof reading!
 
 
 
@@ -90,11 +97,11 @@ This article will be the epic tale of my discovery of WebAssembly, and the journ
 
 Hi! I'm Marcel and I'm the creator of the [Micrio storytelling platform](https://micr.io) built around a high performance ultra high resolution image viewer, for both 2D and 360&deg; images, with added markers, tours, audio, and more.
 
-As a hardcore vanilla JS dev, I started the Micrio JS client development back in 2015, pushing to find the best balance between hardware performance (60fps all the way), minimal CPU and bandwidth use (for older and mobile devices), and still deliver a sharp and high quality viewing experience.
+As a hardcore vanilla JS dev, I started the Micrio JS client development back in 2015, pushing to find the best balance between hardware performance (60fps all the way), minimal CPU and bandwidth use (for older and mobile devices), and still delivering a sharp and high quality viewing experience.
 
 [WebAssembly](https://webassembly.org/) (Wasm) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
-Basically, this means you can run compiled code written in a variety of programming languages (C/C++, Rust, Go, AssemblyScript, [and many more](https://github.com/appcypher/awesome-wasm-langs)) in your browser, without any need for plugins. In its purest form, you will need some JavaScript to get it running and to communicate with the browser. For instance if you want to have a graphical output such as a game, you will need to link your program to work with available renderers, such as WebGL.
+Basically, this means you can run compiled code written in a variety of programming languages (C/C++, Rust, Go, AssemblyScript, [and many more](https://github.com/appcypher/awesome-wasm-langs)) in your browser, without any need for plugins. In its purest form, you will need some JavaScript to get it running and to communicate with the browser. For instance if you want to have a graphical output for e.g. a game, you will need to link your program to work with available renderers, such as WebGL.
 
 This article describes my journey from upgrading the Micrio **JavaScript-only client to use WebAssembly**, with the hopes of improving performance, and taking my code to the next level.
 
@@ -102,11 +109,11 @@ This article describes my journey from upgrading the Micrio **JavaScript-only cl
 
 # 2. The Current Situation
 
-It has been my drive to keep optimizing Micrio since 2015. The latest stable JS of Micrio, [version 2.9](https://b.micr.io/micrio-2.9.min.js), is the result of over 4 years of streamlining, bugfixing, adding features, and keeping it all running as smooth as possible in the browser. 
+The latest stable JS of Micrio, [version 2.9](https://b.micr.io/micrio-2.9.min.js), is the result of over 4 years of streamlining, bugfixing, adding features, and keeping it all running as smoothly as possible in the browser. 
 
 For Micrio, it is **vital** that the performance on the client's browser is as good as possible. The reason for this is very simple: when you are being told a story, or watching a movie, even *a single frameskip* immediately takes you out of your experience.
 
-Because Micrio is being used for an [ever growing list](https://micr.io/showcases) of awesome projects, the most important thing is to make sure that for whoever visits a Micrio project, **it must work, and work well**.
+Micrio is being used for an [ever growing list](https://micr.io/showcases) of awesome projects. The most important thing is to make sure that for whoever visits a Micrio project, **it must work, and work well**.
 
 So also keeping compatibility is hugely important: I don't want to show the user a "**your browser is not supported**" warning, while still keeping up with the latest tech. This balance is hard to find and having to keep compatibility with older tech is sometimes frustrating. Nonetheless, the library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
 
@@ -115,13 +122,13 @@ The current tech stack of [version 2.9](https://b.micr.io/micrio-2.9.min.js):
 * Source files are ES6 JavaScript modules
 * This compiles (using the awesome [closure compiler](https://developers.google.com/closure/compiler)) to JavaScript ES5 so it works on older browsers
 * Canvas2D rendering for 2D images
-* three.js/WebGL rendering for 360&deg; images
+* [three.js](https://threejs.org/)/WebGL rendering for 360&deg; images
 * Using [CustomElements](https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements) + polyfills for the `<micr-io>` tag
 * Using [ShadowRoot](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot) + polyfills
 
-As you can imagine, displaying a [25.500 x 25.500 pixel](https://micr.io/i/ZDQxY/hubble-legacy-field-stsci-h-p1917a-f) in your browser in a matter of milliseconds, allowing the user to freely zoom in and navigate, requires a little bit of processing power.
+As you can imagine, displaying a [231.250 x 193.750 pixel image](https://micr.io/i/xCSYV/) in your browser in a matter of milliseconds, allowing the user to freely zoom in and navigate, requires a little bit of processing power.
 
-Now, Micrio 2.9 *isn't bad*. It runs pretty smooth on all devices. But with WebAssembly around the corner, this could make a *big* difference in making Micrio's performance even better, and could improve the code architecture a lot.
+Now, Micrio 2.9 *isn't bad*. It runs pretty smoothly on all devices. But with WebAssembly around the corner, this could make a *big* difference in making Micrio's performance even better, and could improve the code architecture a lot.
 
 And, perhaps, this could also mark the setup for a new major version, where I will draw a clear line and drop all compatibility and polyfills for older browsers: **Micrio 3.0**.
 
@@ -133,13 +140,13 @@ Already back in 2013, a [demo was released](https://www.youtube.com/watch?v=BV32
 
 This was the first application I saw of [asm.js](https://en.wikipedia.org/wiki/Asm.js) -- allowing compiled code to run inside your browser at near-native speeds, using a super-optimized CPU-friendly subset of JavaScript. You could get this to work by compiling to [LLVM](https://en.wikipedia.org/wiki/LLVM)-compatible formats using for instance [emscripten](https://emscripten.org/) for C/C++-code. 
 
-This was a definite game changer for the web and left me wanting to try it out myself for the longest time (*spoiler: 6 years*). It was also picked up brilliantly by the major browser engines, each in their own optimizing way.
+This was a definite game changer for the web and left me wanting to try it out myself for the longest time (*spoiler: 6 years*). It was also picked up brilliantly by the major browser engines, each with their own way of optimizing.
 
-Fast forward to March 2017. [WebAssembly is introduced](https://hacks.mozilla.org/2017/03/why-webassembly-is-faster-than-asm-js/) as an even more powerful way to run binary code in your browser. This joint effort by all major browsers (Firefox, Chrome, Safari and Internet Explorer) was focussed on bundling all separate efforts made so far by running compiled code inside the browser. I was blown away to realise that *all these browsers have worked together on this*, putting aside their differences.
+Fast forward to March 2017. [WebAssembly is introduced](https://hacks.mozilla.org/2017/03/why-webassembly-is-faster-than-asm-js/) as an even more powerful way to run binary code in your browser. This joint effort by all major browsers (Firefox, Chrome, Safari and Internet Explorer) was focused on bundling all separate efforts made so far by running compiled code inside the browser. I was blown away to realise that *all these browsers have worked together on this*, putting aside their differences.
 
 Two years later in 2019, WebAssembly was recognised by the W3C as [the fourth official programming language for the web](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en). As soon as I realised there would be a [WebAssembly Summit at Google HQ early 2020](https://webassembly-summit.org/), I really, *really* wanted to go there to see what's up. I found a colleague at [Q42](https://www.q42.com/) to join me and in February 2020 we found ourselves in Mountain View, surrounded by an awe-inspiring crowd.
 
-That day was a real eye-opener on what WebAssembly can do, was already doing, and the amount of potential it still has to change how the web works. Not only for running compiled code in your browser, but **so much more** (briefly touched upon at the end of this post).
+That day was a real eye-opener on what WebAssembly can do, what it was already doing, and the amount of potential it still has to change how the web works. Not only for running compiled code in your browser, but **so much more** (briefly touched upon at the end of this post).
 
 Watch the entire WebAssembly Summit 2020 on YouTube here:
 
@@ -149,9 +156,9 @@ Watch the entire WebAssembly Summit 2020 on YouTube here:
 
 # 4. First Rewrite: C++ and emscripten
 
-Prior to the WebAssembly Summit, and to get to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in C or C++, and compile it to a binary `.wasm`-file, that your browser can natively run. 
+Prior to the WebAssembly Summit, and to getting to know the ecosystem, I finally followed up on my mental note from 2013 to play around with [emscripten](https://emscripten.org/). Basically you can take almost any project made in C or C++, and compile it to a binary `.wasm` file, that your browser can natively run. 
 
-At this point, I still didn't really have a clear image of where WebAssembly starts and stops, and how autonomously it could run inside your browser, so I started a new project from scratch to see if I could make a C++-implementation of the basic Micrio logic: a virtual *zoomable* and *pannable* image consisting of a lot of separate tiles, using a virtual camera for displaying only the tiles necessary for what the user is viewing inside your screen.
+At this point, I still didn't really have a clear image of where WebAssembly starts and ends, and how autonomously it could run inside your browser, so I started a new project from scratch to see if I could make a C++-implementation of the basic Micrio logic: a virtual *zoomable* and *pannable* image consisting of a lot of separate tiles, using a virtual camera for displaying only the tiles necessary for what the user is viewing inside your screen.
 
 It turns out, emscripten already had great compatibility for [libsdl](https://www.libsdl.org/): a low-level audio, keyboard/mouse input, and OpenGL library. Which is awesome, because I could write my code using this very well documented library, even including mouse and key inputs and WebGL rendering. Since I was also working with downloading images, I also used the [stb_image.h](https://github.com/nothings/stb) image library.
 
@@ -182,18 +189,18 @@ Writing C++ felt like going back in time. Incredibly powerful and fully proven, 
 ![The emscripten C++ Makefile](img/makefile.png "( ͡° ͜ʖ ͡°)")
 
 ### 2. The compiled `.wasm` binary was very large
-As great as the help of `libsdl` and `stb_image.h` were to let me use OpenGL and JPG image functions, as much did they add to the final compiled binary file. Even with all `emcc` compiler optimizations (which can even use the awesome `closure` JS compiler), the resulting WebAssembly binary file was 760KB; compared to the JavaScript version of Micrio being around 240KB, this was a major setback. These libraries packed a lot of functionalities that were not necessary for Micrio, but were still included in the compiled version.
+As great as the help of `libsdl` and `stb_image.h` were to let me use OpenGL and JPG image functions, as much did they add to the final compiled binary file. Even with all `emcc` compiler optimizations (which can even use the awesome `closure` JS compiler), the resulting WebAssembly binary file was 760KB. Compared to the JavaScript version of Micrio being around 240KB, this was a major setback. These libraries packed a lot of functionalities that were not necessary for Micrio, but were still included in the compiled version.
 
 ### 3. TIL: A *glue* file
 This is the part where I learnt where the limits of WebAssembly start and finish. **WebAssembly is not a magical self-contained binary that lets you run full applications out of the box**. It actually needs to be *bound* to the browser using JavaScript.
 
 ![glue clipart](img/glue.png)
 
-Where I thought that all the SDL OpenGL code in C++ would automagically be recognised by the browser: *wrong*. What `emscripten` does, is to take all OpenGL operations from C++, and _converting them_ to WebGL operations your browser can understand.
+Where I thought that all the SDL OpenGL code in C++ would automagically be recognised by the browser: *wrong*. What `emscripten` does, is to take all OpenGL operations from C++, and _convert them_ to WebGL operations your browser can understand.
 
-Same with the `libsdl` mouse and keyboard-inputs: these were **glued** to the browser using an extra JavaScript file that would set event listeners for the specific cases, and send them to the WebAssembly binary. This separate JavaScript file was generated by the emscripten compiler, and had to be included in the HTML alongside the compiled binary `.wasm`-file.
+Same with the `libsdl` mouse and keyboard-inputs: these were **glued** to the browser using an extra JavaScript file that would set event listeners for the specific cases, and send them to the WebAssembly binary. This separate JavaScript file was generated by the emscripten compiler, and had to be included in the HTML alongside the compiled binary `.wasm` file.
 
-Everything added together, the new total of the *base engine* of Micrio was a whopping **791KB**; a bit too much for my likes.
+Everything added together, the new total of the *base engine* of Micrio was a whopping **791KB**; a bit too much for my liking.
 
 However, it's extremely neat that there is a C++ port of Micrio that would run natively on Linux and MacOS-systems. And I learned a lot from this.
 
@@ -222,9 +229,9 @@ This time, I wanted to see if it was possible to only let a small part of Micrio
 ![Simple camera functions in AssemblyScript](img/assemblyscript.png "My First AssemblyScript")
 *Simple camera functions in AssemblyScript*
 
-The result: a 3KB binary containing some basic math functions, that take an input and return an output. AssemblyScript offers you some *glue-tooling* by providing its own [Loader](https://www.assemblyscript.org/loader.html), which will deal with importing the binary file and being able to call them.
+The result: a 3KB binary containing some basic math functions, that take an input and return an output. AssemblyScript offers you some *glue-tooling* by providing its own [Loader](https://www.assemblyscript.org/loader.html), which will deal with importing the binary file and being able to call these functions.
 
-However, this is optional and I ended up using the JavaScript [WebAssembly API](https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API), *neat*. And it turns out, this is super easy: simply use the `fetch` API to load your compiled `.wasm`-file, cast it as an `ArrayBuffer`, and use the `WebAssembly.instantiate()` function to get it up and running.
+However, this is optional and I ended up using the JavaScript [WebAssembly API](https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API), *neat*. And it turns out, this is super easy: simply use the `fetch` API to load your compiled `.wasm` file, cast it as an `ArrayBuffer`, and use the `WebAssembly.instantiate()` function to get it up and running.
 
 ![Loading a wasm file](img/instantiate.png "Gluing it yourself")
 
@@ -254,23 +261,21 @@ This approach worked wonderfully. Zero weird bugs and errors, and (marginal) bet
 
 Okay, so, mission succeeded! The simplest math functions inside the Micrio JS were now handled by WebAssembly. But all rendering logic (Canvas2D for flat images and three.js/WebGL for 360&deg; images) was still 100% JavaScript.
 
-This is a small summary of my though process for the weeks that followed:
+A small summary of my thought process for the weeks that followed:
 
-> *Great.*
+> "*Great. But there **has** to be more I can do with it!*"
 >
-> *But there **has** to be more I can do with it*
+> "*Can I use it for HTML marker rendering? No -- direct DOM operations are not supported.*"
 >
-> *Can I use it for HTML marker rendering? No -- direct DOM operations are not supported.*
+> "*Can I use it to download the image tiles for me with higher performance? No -- Wasm by itself has no download capabilities.*"
 >
-> *Can I use it to download the image tiles for me with higher performance? No -- Wasm by itself has no download capabilities.*
+> "*Can I replace the current Micrio schizoid Canvas2D and three.js rendering methods using one solution?*"
 >
-> *Can I replace the current Micrio schizoid Canvas2D and three.js rendering methods using one solution?*
->
-> *Hmm...* (this phase lasted about 2 weeks, going to bed and waking up with it)
+> Followed by a 2-week long "*Hmmmm...*"
 
 Yes; yes I could! What if I created my own WebGL renderer, that supports both 2D and 360&deg;?
 
-What is WebGL under the hood? To put it oversimplified: it takes a bunch of coordinate-arrays and textures and draws them on your screen using [shaders](https://en.wikipedia.org/wiki/Shader). These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
+What is WebGL under the hood? To put it oversimplified: it takes a bunch of coordinate arrays and textures and draws them on your screen using [shaders](https://en.wikipedia.org/wiki/Shader). These coordinate arrays would be single abstract representations of the zoomable images with its individual tiles.
 
 **What if I moved the entire rendering logic to AssemblyScript?**
 
@@ -282,7 +287,7 @@ So kind of like the C++ emscripten implementation, but this time using the lean 
 
 *Third time's a charm.*
 
-This iteration, I used what I've learned in my previous two iterations:
+This iteration, I used what I'd learned in my previous two iterations:
 
 1. **It's possible to have the entire rendering logic inside WebAssembly**
 2. **It's possible to combine JS and WebAssembly fluently**
@@ -293,7 +298,7 @@ Back to the drawing board. What I was going to make was a single WebGL renderer,
 
 WebAssembly runs within its own sandbox, using its own requested amount of memory. For instance, a WebAssembly program can request 16MB of memory to work with. This memory is assigned by the browser, and can be fully used by your WebAssembly program.
 
-As the developer, you are **100%** in control of this memory. Micrio is an excellent case where the amount of memory needed to handle the zoomable image logic can be precalculated. So it's entirely possible to have a WebAssembly program producing *zero* garbage memory; ie. runs without any external optimizations.
+As the developer, you are **100%** in control of this memory. Micrio is an excellent case where the amount of memory needed to handle the zoomable image logic can be precalculated. So it's entirely possible to have a WebAssembly program producing *zero* garbage memory, ie. runs without any external optimizations.
 
 
 ![180 bytes of memory for a single 2D tile](img/singletile.png "A single 2D tile takes 180 bytes of memory")
@@ -301,7 +306,7 @@ As the developer, you are **100%** in control of this memory. Micrio is an excel
 
 The cool thing is: this memory buffer is fully available from JavaScript as an `ArrayBuffer` object.
 
-So.. if WebAssembly can create an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and texture coordinate buffers!
+So... if WebAssembly can create an array of vertices in 3D space, and JavaScript can have a *casted view* of those as a `Float32Array` (not cloned, simply a pointer to the shared memory space), these can be passed directly to WebGL, since WebGL accepts `Float32Array`s for its geometry and texture coordinate buffers!
 
 That means that the output of WebAssembly is **directly connected** to WebGL's input by JavaScript *just once*, at initialization.
 
@@ -316,11 +321,11 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 Now the basic setup was known, this is where it became more difficult. I had to *actually* take all the JS code for rendering 2D images using Canvas2D and 360&deg; images using three.js/WebGL (let's call this the *twin engine*), and rewrite it in AssemblyScript, using WebGL as graphical output.
 
-This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are below.
+This required a few steps, which I will not fully document here since it's out of scope (*next blogpost: WebGL?*). But the most important steps are laid out below.
 
 ![A schema I found googling "WebGL pipeline"](img/pipeline.svg)*The German WebGL rendering pipeline -- you're welcome! ([wiki](https://commons.wikimedia.org/wiki/File:Graphics_pipeline_de.svg))*
 
-The input for AssemblyScript are only the Micrio image parameters: a unique ID, the image width and height. The output must be WebGL-ready *vertex* and *texture coordinate* array buffers, containing all coordinates of all tiles and their individual texture mappings.
+The input for AssemblyScript are only the Micrio image parameters: a unique ID, and the image width and height. The output must be WebGL-ready *vertex* and *texture coordinate* array buffers, containing all coordinates of all tiles and their individual texture mappings.
 
 WebGL in its raw form gives you only low level functions to work with. Where drawing a tile in Canvas2D was simply using `context.drawImage(...)` with some relative coordinates, now all tile coordinates should be stored in a single vertex array buffer having static positions, which WebGL will draw relative to the virtual camera's 3D Matrix and the user's browser viewport.
 
@@ -337,7 +342,7 @@ A single tile is simply defined as a flat 2D plane, with 6 vertex coordinates to
 
 
 ### 6.2.2. 360&deg; images
-For the 360&deg; images, this proved to be a larger challenge. Where three.js has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to middle school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge to manually do all the work that three.js had been doing for me before.
+For the 360&deg; images, this proved to be a larger challenge. Where three.js has added a super awesome higher level API where I was using `THREE.SphereBufferGeometry` to create the individual tiles inside the 360&deg; sphere, resulting in all geometry and texture mapping being taken care of, now I had to go back to school and refamiliarize myself with all `sin`, `cos` and `tan` math knowledge to manually do all the work that three.js had been doing for me before.
 
 I really, really wish I paid better attention in school then.
 
@@ -353,7 +358,7 @@ It all makes sense. But it took a long time before I got it right; not even ment
 ![A WebAssembly vertex buffer as Float32Array](img/vertexbuffer.png "The Float32Array vertex buffer generated by WebAssembly in the JS console")
 *The Float32Array vertex buffer generated by WebAssembly in the JS console*
 
-In the end, both the 2D and 360&deg; images result in a single array buffer useable by WebGL, generated at runtime.
+In the end, both the 2D and 360&deg; images result in a single array buffer usable by WebGL, generated at runtime.
 
 
 ## 6.3. Connecting it to JavaScript
@@ -379,7 +384,7 @@ Bit by bit, over the course of a few weeks, this engine was made as a perfect fi
 
 ## 6.4. Rendering the lot
 
-This is what's so cool about WebGL: you can tell it to render certain *parts* of your pregenerated geometry buffer. All you need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
+This is what's so cool about WebGL: you can tell it to render certain *parts* of your pre-generated geometry buffer. All you need is to know the individual tiles' buffer start index, and the number of coordinates the tile uses in 3d space, and those are the only parameters to pass to WebGL to draw this tile (alongside the correct texture reference-- disregarded here).
 
 The functions to decide what those tiles are, are quite different between 2D and 360&deg; images, the latter using a lot of 3D Matrix calculations, of which I will spare you the details here.
 
@@ -404,7 +409,7 @@ After all said and done, and not quite as straightforward as described here (360
 
 So, after the entire ordeal of the previous chapter, we are now left with a *testable* Micrio JS/Wasm/WebGL client. Not yet ready for production, but slowly going from first steps to the full performance potential.
 
-The new client already *felt* a lot smoother in my browser. Zooming, panning and animating clearly went more smooth than the previous JS-only version.
+The new client already *felt* a lot smoother in my browser. Zooming, panning and animating clearly went more smoothly than the previous JS-only version.
 
 This was also not a very big surprise, just looking at the difference in uncompiled code of both versions:
 
@@ -441,12 +446,12 @@ All tests were run with the browser in fullscreen mode, on a 1440p screen (2560 
 
 ## 7.2. The testing process
 
-Before we go to the results, these are some general things I've learned in the bencharking and subsequent optimization process.
+Before we go to the results, these are some general things I've learned in the benchmarking and subsequent optimization process.
 
 
 **Tip 1: if you can, make the benchmark as quick and meaningful as possible**
 
-Since I was using my work laptop for benchmarking, and I made the benchmark test tour *2 whole minutes long* (which is too *short* to leave it running and come back later, but too *long* to wait it out), especially since I wasn't multitasking during the benchmarks, I *really* wished I made the benchmark at least 50% shorter. But since I already had a lot of results when I realised this, I didn't want to blemish them by changing the tour halfway, or by redoing them all.
+Since I was using my work laptop for benchmarking, and I made the benchmark test tour *2 whole minutes long* (which is too *short* to leave it running and come back later, but too *long* to wait it out), especially since I wasn't multitasking during the benchmarks, I *really* wished I made the benchmark at least 50% shorter. But since I already had a lot of results when I realized this, I didn't want to blemish them by changing the tour halfway, or by redoing them all.
 
 So I stuck with the 2:00 tour. I can still dream every frame.
 
@@ -465,13 +470,13 @@ To be sure, and because you never know the state of the testing machine, every f
 
 Sometimes after a benchmark, I would change several small things at once, and then run the benchmark again to see if I *fixed it*.
 
-After *a lot* of trial runs, I found out that this was not a smart thing to do. Some subtle settings (like turning alpha transparency on or off for WebGL) might be a single `true` to `false` setting, but could a have major performance impact. And without testing that setting individually, *you just don't know that*. It might feel too menial, but it's really worth it.
+After *a lot* of trial runs, I found out that this was not a smart thing to do. Some subtle settings (like turning alpha transparency on or off for WebGL) might be a single `true` to `false` setting, but could have a major performance impact. And without testing that setting individually, *you just don't know that*. It might feel too menial, but it's really worth it.
 
 
 
 ## 7.3. First results and subsequent runs
 
-First of all, the benchmarks were *not only* testing the JavaScript vs WebAssembly performance. A lot more had changed under the hood, for instance going from Canvas2D rendering to WebGL. These tests are by no means good comparisons for barebone JS versus Wasm, but rather performance of Micrio as a whole.
+First of all, the benchmarks were *not only* testing the JavaScript vs WebAssembly performance. A lot more had changed under the hood, for instance going from Canvas2D rendering to WebGL. These tests are by no means good comparisons for barebone JS versus Wasm, but rather the performance of Micrio as a whole.
 
 After the first few trial runs, while the test *looked* much smoother on my screen using Micrio 3.0, the measured results were not that impressive. Over the 2 minute measured timespan, there was only *14% less* CPU usage than with 2.9, tested over a number of trials.
 
@@ -511,13 +516,11 @@ This is by far the best way to optimize code. However, the next part details som
 Okay. The Micrio blooper reel. What did I do horribly wrong, and why did I do that?
 
 ### Don't use `WebWorkers` for simple download tasks
-A lot of Micrio involves downloading *a lot* of individual tile-textures when the user is panning and zooming the large images. [WebWorkers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) are asynchronously running separate CPU thread you can call from your main JS thread, which you can give a task to do on its own.
+A lot of Micrio involves downloading *a lot* of individual tile-textures when the user is panning and zooming the large images. [WebWorkers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) are asynchronously running separate CPU threads you can call from your main JS thread, which you can give a task to do on their own.
 
 I thought it would be a good idea to offload the texture loading to 3 separate WebWorkers. On paper this is a good idea: the downloading and casting to `ImageBitmap` can be done in the WebWorker, and when it's done, it just passes the bitmap back to the main JS thread, so it can be linked as a WebGL texture.
 
-After using this for a while, I found out that this was actually a large performance stopper. I haven't fully dived into it, but I do know this:
-
-**I assumed I knew what was good for the browser.**
+After using this for a while, I found out that this was actually a large performance stopper. I haven't fully dived into it, but I do know this: *I assumed I knew what was good for the browser*.
 
 What I forgot is that the browser engine is *heavily* optimized by itself, and by using the WebWorkers, I solved a problem before it became a problem. The browser on itself is optimized enough to simply download all the images in the main JS thread.
 
@@ -535,7 +538,7 @@ That was a nice one to find out, since otherwise it seemed to be working quite w
 ### Take best practises seriously
 *Note*: Until writing this article I thought this was common knowledge, but I couldn't find any source to back me up. It *is* a best practice however!
 
-In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early as possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than than a few milliseconds, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
+In a `requestAnimationFrame`-loop, put your next frame request (the next `requestAnimationFrame` call) *as early as possible* in your rendering function. The reason for this is that if your actual drawing and rendering will take longer than a few milliseconds, the next frame request might be called too late for your browser to still give it space to actually give it the next frame!
 
 This is what caused earlier Micrio versions a lot of janks and frameskips. The steps in the render functions were:
 
@@ -565,13 +568,13 @@ Your browser is already the result of 25+ years of the biggest minds on the web 
 
 As a final optimization step, I decided to see how much I could optimize the [AssemblyScript compiler](https://www.assemblyscript.org/compiler.html#command-line-options). As it turns out, there were quite a few things I could influence; like turning off the not-needed bundled runtime, and the C++-like `-O3z` to get the smallest binary possible.
 
-One option however stood out to me:
+One option, however, stood out to me:
 
 ```
 --pedantic        Make yourself sad for no good reason.
 ```
 
-This option will show all the nitty gritty compiler warnings, going from 0 to 100+ after turning this on. I firstly decided to ignore this, but instead of hiding my sadness, I took it upon myself to face them head-on.
+This option will show all the nitty gritty compiler warnings, going from 0 to 100+ after turning this on. I first decided to ignore this, but instead of hiding my sadness, I took it upon myself to face it head-on.
 
 Two things I learned from this:
 
@@ -593,7 +596,7 @@ Or for a better comparison:
 
 :tada: **65% less CPU used than in 2.9!** :metal:
 
-Above that, all frameskips were gone, and there was less memory used. These results were also the same over multiple runs.
+Above that, all frame skips were gone, and there was less memory used. These results were also the same over multiple runs.
 
 This proved to me that the whole operation was worth it. I was ecstatic, and tired of the early mornings and nights that the optimizing took me.
 
@@ -607,7 +610,7 @@ There are a few important constraints for the production version of the Micrio J
 
 * It needs to be **a single download**: The downloaded JS file should be the *entire runtime*; there shouldn't be an extra HTTP request for the Wasm binary. This would be a lot more hassle for developers, as it immediately loses its stand-alone properties;
 
-* It needs to be **light weight**: Micrio is a JS library often included in external web projects, and should not affect any download times;
+* It needs to be **lightweight**: Micrio is a JS library often included in external web projects, and should not affect any download times;
 
 * It needs to **load and work on *all* browsers**: It cannot be the responsibility of the developer to do browser detection and Micrio version selection based on that.
 
@@ -625,7 +628,7 @@ So, [like before](#52-bundling-the-compiled-wasm-inside-the-js-file), I took the
 
 
 
-## 8.2. Keeping it light weight
+## 8.2. Keeping it lightweight
 
 Since our current version uses Wasm, and since all browsers that support that [also support native ES6 JavaScript](https://caniuse.com/#search=es6) (or ECMAScript 6, the latest version of JavaScript), I knew that *for the browsers able to run this Micrio version*, I didn't have to compile the JS to ES5 anymore.
 
@@ -633,7 +636,7 @@ That means that the [closure compiled](https://developers.google.com/closure/com
 
 Adding to that our 42KB of base64-encoded Wasm binary, we are left with a bundled, fully working, ES6 executable Micrio JS of **212KB**.
 
-Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#73-first-results-and-subsequent-runs)) about a 15% decrease of filesize. Also, since the hosted Micrio JS is delivered using `gzip` compression, the resulting download sizes were also improved: **73KB** for Micrio 3.0 vs **84KB** vs 2.9!
+Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#73-first-results-and-subsequent-runs)) about a 15% decrease of file size. Also, since the hosted Micrio JS is delivered using `gzip` compression, the resulting download sizes were also improved: **73KB** for Micrio 3.0 vs **84KB** vs 2.9!
 
 (*Why am I not using [`brotli`](https://github.com/google/brotli) for compression? Because Internet Explorer 10/11 don't support it, and I cannot dynamically serve different compressions since the Micrio JS is hosted on a static server.*)
 
@@ -650,7 +653,7 @@ Which (and I really tried), *it didn't*.
 
 This could simply be resolved including a browser warning for older, non-compatible browsers. Or, instructing that developers using Micrio in their projects should stick to the 2.9 version.
 
-Which neither I wanted to do:
+Neither of which I wanted to do:
 
 * Micrio projects are often aimed at broad audiences and should be *all inclusive*-- even your grandparents still using Internet Explorer 10 should be able to enjoy the projects;
 
@@ -704,7 +707,7 @@ One disadvantage of `base64`-ing all compiled ES6-JS code (170KB), was that it r
 
 Which was a 20% increase over Micrio 2.9.
 
-Not dramatic, but I *still* felt unsatisfied, since the smaller filesize advantage was gone due to *Internet Explorer*.
+Not dramatic, but I *still* felt unsatisfied, since the smaller file size advantage was gone due to *Internet Explorer*.
 
 I would not let it defeat me!
 
@@ -741,14 +744,14 @@ I could now finally sleep peacefully.
 
 # 9. Concluding
 
-*And that*, children, is how I ended up with the weird-looking, but greatly working [micrio-3.0.min.js](https://b.micr.io/micrio-3.0.min.js)!
+*And that* is how I ended up with the weird-looking, but greatly working [micrio-3.0.min.js](https://b.micr.io/micrio-3.0.min.js)!
 
 
 ## 9.1. Results for Micrio
 
 Overall, I'm extremely satisfied with how everything turned out. Not only did I migrate Micrio to WebAssembly as much as it could benefit from it, I also took a step into the future by dropping compatibility for older browsers, while still providing an automatic fallback to 2.9.
 
-The client performance is 65% better, the JS filesize is 60% smaller, and the codebase became *a lot* cleaner, with a clear separation between AssemblyScript and JavaScript responsibilities.
+The client performance is 65% better, the JS file size is 60% smaller, and the codebase became *a lot* cleaner, with a clear separation between AssemblyScript and JavaScript responsibilities.
 
 *What's not to like?*
 
@@ -756,13 +759,13 @@ The client performance is 65% better, the JS filesize is 60% smaller, and the co
 
 ## 9.2. What's missing?
 
-This is a tough question. What would I like to see differently?
+This is a tough question. What would I like to see different?
 
-For the Micrio implementation, not a lot. I've offloaded the rendering as much as possible to Wasm. Micrio also has a lot of other logic (HTML markers, popups, using the Audio API..), but putting those in Wasm as well would not be benificial for a number of reasons:
+For the Micrio implementation, not a lot. I've offloaded the rendering as much as possible to Wasm. Micrio also has a lot of other logic (HTML markers, popups, using the Audio API..), but putting those in Wasm as well would not be beneficial for a number of reasons:
 
 * *Any HTML operation would still require a JS render function*, and the browser's HTML rendering pipeline would not change at all. It would actually be adding an extra step.
 
-* *The Wasm program would lose its static memory size*: since now all it does is rendering the image, the required memory buffers are generated at runtime, and do not grow over time. When I would add markers and additional elements, which can be dynamically added and removed, the reserved memory size would potentially be expanded during runtime, adding more rebinding logic to it.
+* *The Wasm program would lose its static memory size*: since now all it does is render the image, the required memory buffers are generated at runtime, and do not grow over time. When I would add markers and additional elements, which can be dynamically added and removed, the reserved memory size would potentially be expanded during runtime, adding more rebinding logic to it.
 
 
 As for Wasm functionality, I've used only the basics since Micrio is quite simple. For more advanced features like multithreading and being able to use reference types, check out the [WebAssembly roadmap](https://webassembly.org/roadmap/), as Wasm is still under heavy active development.
@@ -776,7 +779,7 @@ However, what I *would* like to see, is a *single, binary executable download* (
 
 But, that's only really nice to have.
 
-What I *am* suprised about, is that browsers don't have a native `gzip` API: since it's perfectly able to do it on the fly for downloading resources, it would make my JS another 12KB lighter.
+What I *am* surprised about, is that browsers don't have a native `gzip` API: since it's perfectly able to do it on the fly for downloading resources, it would make my JS another 12KB lighter.
 
 
 
