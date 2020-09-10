@@ -93,7 +93,7 @@ And, perhaps, this could also mark the setup for a new major version, where I wi
 
 
 
-## 2. First Rewrite: C++ and emscripten
+# 2. First Rewrite: C++ and emscripten
 
 As a first step into the world of WebAssembly, getting to know the ecosystem, I started to play around with [emscripten](https://emscripten.org/). With it, you can take almost any project made in C or C++, and compile it to a binary `.wasm` file that your browser can natively run. 
 
