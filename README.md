@@ -10,28 +10,29 @@ Hi! I'm Marcel, web developer at [Q42](https://www.q42.com/) and creator of the 
 
 In 2015, I started developing a JavaScript viewer for ultra high resolution 2D and 360&deg; images with added markers, tours, audio, and more. Since then, I've been pushing to find the best balance between hardware performance, minimal CPU and bandwidth use, and compatibility for older browsers to deliver a sharp and high quality viewing experience.
 
-For Micrio, it is **vital** that the performance on the client's browser is as good as possible. The reason for this is very simple: when you are being told a story, or watching a movie, even *a single frameskip* immediately takes you out of your experience.
+For Micrio, it is vital that the performance on the client's browser is as good as possible. The reason for this is very simple: when you are being told a story, or watching a movie, even *a single frameskip* immediately takes you out of your experience.
 
-Micrio is being used for an [ever growing list](https://micr.io/showcases) of awesome projects. The most important thing is that for whoever visits a Micrio project, **it must work, and work well**.
-
+Since Micrio is being used for an [ever growing list](https://micr.io/showcases) of awesome projects, the most important thing is that for whoever visits a Micrio project, it must work, and *work well*: delivering fast load times, and a butter smooth interactive experience.
 
 [WebAssembly](https://webassembly.org/) (Wasm) is the ability for your browser to run *compiled* code at (near-) native speeds. It is now recognised by the W3C as the [4th official web programming language](https://www.w3.org/2019/12/pressrelease-wasm-rec.html.en), after HTML, CSS and JavaScript.
 
 With it, you can run compiled code written in a variety of programming languages (C/C++, Rust, Go, AssemblyScript, [and many more](https://github.com/appcypher/awesome-wasm-langs)) in your browser, without any need for plugins.
 
+Finding out about Wasm in late 2019 really made me want to try it out. Could I use this tech to make the Micrio client run smoother than the current version does? Would I need to rewrite everything in C++, and if so, how would that work? Would the effort be worth the gains it would give me? And not in the least.. *how does it work!?*
+
 This article describes my journey from upgrading the Micrio **JavaScript-only client to use WebAssembly**, with the hopes of improving performance, and taking my code to the next level.
 
 
 
-## 1.1. Version 2.9
+## 1.1. The current version
 
-The latest JS-only revision of Micrio is [version 2.9](https://b.micr.io/micrio-2.9.min.js). This library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
+To give a rough idea about the tech stack of the current latest JS-only revision of Micrio ([version 2.9](https://b.micr.io/micrio-2.9.min.js)): This library as a single JS file works on all semi-modern browsers, including even Internet Explorer 10 for 2D, and IE 11 for 360&deg; images.
 
 It uses Canvas2D for the rendering of 2D images, and [three.js](https://threejs.org/)/WebGL rendering for 360&deg; images. Written in [ES6 JavaScript](https://caniuse.com/#search=es6) (or ECMAScript 6, the latest version of JavaScript), it still [compiles](https://developers.google.com/closure/compiler) to ES5 to support Internet Explorer 11.
 
 As you can imagine, displaying a [231.250 x 193.750 pixel image](https://micr.io/i/xCSYV/) in your browser in a matter of milliseconds, allowing the user to freely zoom in and navigate, requires a little bit of processing power.
 
-Micrio 2.9 *isn't bad*. It runs pretty smoothly on all devices. But with WebAssembly around the corner, allowing all calculations to be done at native CPU speeds, this could make a big difference in making Micrio's performance even better, and could improve the code architecture a lot.
+Now, Micrio 2.9 *isn't bad*. It runs pretty smoothly on all devices. But with WebAssembly around the corner, allowing all calculations to be done at native CPU speeds, this could potentially make a big difference in making Micrio's performance even better, and could improve the code architecture a lot.
 
 And, perhaps, this could also mark the setup for a new major version, where I will draw a clear line and drop all compatibility and polyfills for older browsers: **Micrio 3.0**.
 
@@ -543,6 +544,7 @@ But, that's only really nice to have.
 
 Overall, I'm extremely satisfied with how everything turned out. Not only did I migrate Micrio to WebAssembly as much as it could benefit from it, I also took a step into the future by dropping compatibility for older browsers, while still providing an automatic fallback to 2.9.
 
+Are the performance gains of the new version fully attributable to WebAssembly? Most likely not. I believe the new architecture using WebGL, if implemented in pure JavaScript, would still create a speed profit over the previous version. But having a monolithic and compiled renderer definitely gives even more speed, control, and maintainability. Plus, working in a compilable language for the web is just *awesome*.
 
 For WebAssembly, seeing the possibilities and applications [growing every day](https://madewithwebassembly.com/), I'm extremely excited to see what doors it will open for the future of the web.
 
