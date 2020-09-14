@@ -133,7 +133,8 @@ As great as the help of `libsdl` and `stb_image.h` were to let me use OpenGL and
 ### 3. TIL: A *glue* file
 This is the part where I learnt where the limits of WebAssembly start and finish. **WebAssembly is not a magical self-contained binary that lets you run full applications out of the box**. It actually needs to be *bound* to the browser using JavaScript.
 
-![glue clipart](img/glue.png)
+![glue clipart](img/glued.png)
+[Image source](http://www.clker.com/clipart-13445.html)
 
 Where I thought that all the SDL OpenGL code in C++ would automagically be recognised by the browser: *wrong*. What `emscripten` does, is to take all OpenGL operations from C++, and _convert them_ to WebGL operations your browser can understand.
 
