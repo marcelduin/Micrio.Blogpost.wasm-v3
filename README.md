@@ -1,61 +1,6 @@
 # Going From JavaScript To WebAssembly In Three Steps
 
-## A Journey From Canvas2D &amp; three.js/WebGL To AssemblyScript &amp; WebGL in 3 iterations
-
-
-# Table of Contents
-
-1. [**Introduction**](#1-introduction)
-
-	1. [**Version 2.9**](#11-version-29)
-
-2. [**First Rewrite: C++ and emscripten**](#2-first-rewrite-c-and-emscripten)
-
-	1. [**First Results**](#21-first-results)
-
-3. [**Second Rewrite: AssemblyScript**](#3-second-rewrite-assemblyscript)
-
-	1. [**Going Atomic**](#31-going-atomic)
-
-	2. [**Bundling the compiled Wasm inside the JS file**](#32-bundling-the-compiled-wasm-inside-the-js-file)
-
-	3. [**The Realization**](#33-the-realization)
-
-4. [**Third Rewrite: AssemblyScript &amp; WebGL**](#4-third-rewrite-assemblyscript--webgl)
-
-	1. [**Directly connecting WebAssembly's Memory to WebGL**](#41-connecting-webassemblys-memory-to-webgl)
-
-	2. [**Moving the image tile logic to AssemblyScript**](#42-moving-the-image-tile-logic-to-assemblyscript)
-
-	3. [**Connecting it to JavaScript**](#43-connecting-it-to-javascript)
-
-	4. [**Rendering the lot**](#44-rendering-the-lot)
-
-
-5. [**Putting it to the test**](#5-putting-it-to-the-test)
-
-	1. [**Benchmark till you drop**](#51-benchmark-till-you-drop)
-
-	2. [**First results and subsequent runs**](#52-first-results-and-subsequent-runs)
-
-	3. [**Optimizing**](#53-optimizing)
-
-	4. [**Be pedantic**](#54-be-pedantic)
-
-	5. [**The final test results are in**](#55-the-final-test-results-are-in)
-
-
-6. [**Going to production**](#6-going-to-production)
-
-	1. [**Keeping it a single download**](#61-keeping-it-a-single-download)
-
-	2. [**Keeping it light weight**](#62-keeping-it-light-weight)
-
-	3. [**Keeping it compatible**](#63-keeping-it-compatible)
-
-
-7. [**Concluding**](#7-concluding)
-
+## My journey of taking the Micrio client to the next level
 
 
 
