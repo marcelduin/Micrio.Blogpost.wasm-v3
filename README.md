@@ -237,6 +237,7 @@ That means that the output of WebAssembly is **directly connected** to WebGL's i
 
 
 ![JavaScript directly connecting WebAssembly output to WebGL input](img/connecting.png "Leaving the hard computational work to the parts made for it")
+[Image source](http://www.clker.com/clipart-14374.html)
 
 
 
