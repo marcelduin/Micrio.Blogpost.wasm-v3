@@ -236,7 +236,7 @@ So... if WebAssembly can create an array of vertices in 3D space, and JavaScript
 That means that the output of WebAssembly is **directly connected** to WebGL's input by JavaScript *just once*, at initialization.
 
 
-![JavaScript directly connecting WebAssembly output to WebGL input](img/connoct.jpg "Leaving the hard computational work to the parts made for it")
+![JavaScript directly connecting WebAssembly output to WebGL input](img/connecting.png "Leaving the hard computational work to the parts made for it")
 
 
 
