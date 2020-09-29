@@ -121,7 +121,7 @@ The compiled binary will then offer an `exports` object, containing the function
 
 Wait.. "*which you can immediately call from JavaScript as if they were normal functions*"...
 
-**WebAssembly is running synchronously to JavaScript!** :exploding_head:
+**WebAssembly is running synchronously to JavaScript!** &#x1F92F;
 
 Having worked with WebWorkers before, I honestly thought that WebAssembly would run inside its own CPU thread, and that any function calls would be `async`. Nope, the Wasm-functions you call will return immediately!
 
