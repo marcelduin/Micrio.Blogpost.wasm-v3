@@ -417,7 +417,7 @@ That means that the [closure compiled](https://developers.google.com/closure/com
 
 Adding to that our 42KB of base64-encoded Wasm binary, we are left with a bundled, fully working, ES6 executable Micrio JS of **212KB**.
 
-Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#73-first-results-and-subsequent-runs)) about a 15% decrease of file size. Also, since the static hosted Micrio JS is delivered using `gzip` compression (not `brotli` because of IE), the resulting download sizes were also improved: **73KB** for Micrio 3.0 vs **84KB** vs 2.9!
+Putting that next to the 2.9 compiled JS of 250KB, that's ([*again*](#first-results-and-subsequent-runs)) about a 15% decrease of file size. Also, since the static hosted Micrio JS is delivered using `gzip` compression (not `brotli` because of IE), the resulting download sizes were also improved: **73KB** for Micrio 3.0 vs **84KB** vs 2.9!
 
 
 ### Keeping it compatible
